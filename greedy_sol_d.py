@@ -23,7 +23,7 @@ if __name__ == "__main__":
         if time + vt > f:
             print("Job", j, "is not feasible.")
             continue
-        job_list.append((time_waste,j,new_score,time+vt))
+        job_list.append((time_waste + .1*length,j,new_score,time+vt))
     job_list.sort()
     for i in range(fleet):
         jobs[i] = job_list.copy()
@@ -50,7 +50,7 @@ if __name__ == "__main__":
             time_waste = max(abs(vx-a) + abs(vy-b), s - vt)
             new_score = length + bonus if abs(vx-a) + abs(vy-b) <= s - vt else length
             if time + vt > f: continue
-            jobs[i].append((time_waste,j,new_score,time+vt))
+            jobs[i].append((time_waste + .1*length,j,new_score,time+vt))
         jobs[i].sort()
     print("Score:", score, '       ')
     print("Number of routes visited:", len(jobs_done))
