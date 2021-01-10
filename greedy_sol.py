@@ -24,7 +24,7 @@ if __name__ == "__main__":
 
     score = 0
     while any(jobs):
-        i,(_,j,l,vt) = min((i,job[0]) for i,job in enumerate(jobs) if len(job) > 0)
+        i,(_,j,l,vt) = max(((i,job[0]) for i,job in enumerate(jobs) if len(job) > 0), key = lambda x : x[1][0])
         if j in jobs_done:
             jobs[i].pop(0)
             continue
@@ -46,6 +46,7 @@ if __name__ == "__main__":
             jobs[i].append((new_score/time,j,new_score,time+vt))
         jobs[i].sort(reverse = True)
     print("Score:", score, '       ')
+    print("Number of routes visited:", len(jobs_done))
 
     with open('res/{}_{}.out'.format(sys.argv[1][0], score), 'w') as f:
         for r in res:
