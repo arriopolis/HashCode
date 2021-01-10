@@ -34,6 +34,7 @@ if __name__ == "__main__":
 
     # Check score obtained by vehicle
     score = 0
+    bonus_ctr = 0
     for v in routes:
         t = 0
         vx,vy = 0,0
@@ -45,6 +46,7 @@ if __name__ == "__main__":
             if t <= s:
                 # print("Bonus!")
                 score += bonus
+                bonus_ctr += 1
                 t = s
             # print("Start:", t)
             t += abs(vx-x) + abs(vy-y)
@@ -55,3 +57,4 @@ if __name__ == "__main__":
             if t > timelimit: break
             vx,vy = x,y
     print("Total score:", score)
+    print("Number of bonusses:", bonus_ctr)
