@@ -13,14 +13,19 @@ if __name__ == "__main__":
     res = [[] for _ in range(fleet)]
     jobs = [[] for _ in range(fleet)]
     jobs_done = set()
-    for i,(vx,vy,vt) in enumerate(vehicles):
-        for j,(a,b,x,y,s,f) in enumerate(rides):
-            length = abs(x-a) + abs(y-b)
-            time = max(abs(vx-a) + abs(vy-b), s - vt) + length
-            new_score = length + bonus if abs(vx-a) + abs(vy-b) <= s - vt else length
-            if time + vt > f: continue
-            jobs[i].append((new_score/time,j,new_score,time+vt))
-        jobs[i].sort(reverse = True)
+    job_list = []
+    vx,vy,vt = 0,0,0
+    for j,(a,b,x,y,s,f) in enumerate(rides):
+        length = abs(x-a) + abs(y-b)
+        time = max(abs(vx-a) + abs(vy-b), s - vt) + length
+        new_score = length + bonus if abs(vx-a) + abs(vy-b) <= s - vt else length
+        if time + vt > f:
+            print("Job", j, "is not feasible.")
+            continue
+        job_list.append((new_score/time,j,new_score,time+vt))
+    job_list.sort(reverse = True)
+    for i in range(fleet):
+        jobs[i] = job_list.copy()
 
     score = 0
     while any(jobs):
