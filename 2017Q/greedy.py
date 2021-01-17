@@ -1,4 +1,4 @@
-from check_sol import read_input
+from check_sol_v2 import calc_score, read_input, read_output
 import time
 import sys
 print(sys.argv[0])
@@ -9,29 +9,30 @@ V,E,R,C,X,vidsize,endpoints,requests = read_input(sys.argv[1])
 endpoint_cache_latency = { e_id:sorted([[cache[0], endpoint[0][0] - cache[1]] for cache in endpoint[1:]], key = lambda x: -x[1]) for e_id, endpoint in enumerate(endpoints)}
 
 # Calc metric for all requests
-
-t = time.time()
-request_with_metric = []
+request_with_metric = [] # video_id, endpoint_id, #requests, metric, cache_id
 for v_id, e_id, num_req in requests:
-    if len(endpoint_cache_latency[e_id]) == 0:
-        request_with_metric.append([v_id, e_id, num_req, 10000000000000000000000000, -1])
-    else:
+    if len(endpoint_cache_latency[e_id]) != 0:
+        # get fastest cache
         c_id, latency = endpoint_cache_latency[e_id][0]
-        # latency metric
         metric = num_req*latency
-
         request_with_metric.append([v_id, e_id, num_req, metric, c_id])
-print(time.time() -t)
+
 
 #sort by metric
 request_with_metric = sorted(request_with_metric, key = lambda x: x[3])[::-1]
-print(request_with_metric[:10])
 
-
-
-# add request to cache
+# Create output structure
 cache_size_left = [X for i in range(C)] # size of cache
 videos_in_cache = [set() for i in range(C)] # videos in cache
+
+#RESUME
+if (len(sys.argv) >2):
+    S,caches = read_output(sys.argv[2])
+    for cache in caches:
+        c_id = cache[0]
+        for v_id in cache[1:]:
+            videos_in_cache[c_id].add(v_id)
+            cache_size_left[c_id] -= vidsize[v_id]
 print("n_metrics:", len(request_with_metric))
 k =0
 while len(request_with_metric) > 0:
@@ -39,10 +40,9 @@ while len(request_with_metric) > 0:
     if (k %1000 == 0):
         print(k,len(request_with_metric), "left")
     v_id, e_id, num_req, metric, c_id = request_with_metric.pop(0)
-    if c_id == -1:
-        continue
     # check if request is still valid
     if v_id in videos_in_cache[c_id]:
+        # if the video is already in cache disregard
         continue
     if cache_size_left[c_id] < vidsize[v_id]:
         # recalculate metric
@@ -65,7 +65,6 @@ while len(request_with_metric) > 0:
 
 caches = [[i]+list(cache) for i, cache in enumerate(videos_in_cache)]
 import os
-from check_sol_v2 import calc_score
 
 score = calc_score(caches, vidsize, endpoints, requests, V, X)
 file_name = os.path.join("output", '.'.join(sys.argv[1].split('.')[:-1])+'_'+str(score)+'.out')
