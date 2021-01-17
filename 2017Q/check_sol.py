@@ -14,10 +14,5 @@ def read_input(filename):
     requests = []
     for i in range(R):
        requests.append([int(x) for x in f.readline().strip().split()])
-    
+
     return V,E,R,C,X,vidsize,endpoints,requests
-
-if __name__ == "__main__":
-    return 0
-
-
