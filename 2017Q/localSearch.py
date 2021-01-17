@@ -32,7 +32,7 @@ def deltaremovevideofromcache(S, caches):
 
             print("Cost for removing video " + str(v) + " from cache " + str(c[0]) + " is " + str(delta) + ".\n")
 
-            if delta > -5:
+            if delta > -15000:
                 popindices += [vi+1]
 
         popindices.reverse()
@@ -43,11 +43,14 @@ def deltaremovevideofromcache(S, caches):
     return caches
 
 if __name__ == "__main__":
+    inputfile = sys.argv[1]
+    outputfile = sys.argv[2]
+
     # inputfile = "example.in"
     # outputfile = "example.out"
 
-    inputfile = "kittens.in"
-    outputfile = "output/kittens.in.out"
+    # inputfile = "me_at_the_zoo.in"
+    # outputfile = "output/me_at_the_zoo.reduced.out"
 
     # inputfile = "kittens.in"
     # outputfile = "output/kittens.in.out"
@@ -59,11 +62,11 @@ if __name__ == "__main__":
     caches = deltaremovevideofromcache(S, caches)
     print(caches)
 
-    file_name = os.path.join("output", '.'.join(outputfile.split('.')[:-1]) + '.reduced.out')
+    file_name = os.path.join(outputfile[:-4]) + "_" + str(calc_score(caches, vidsize, endpoints, requests, V, X)) + '.reduced.out'
     with open(file_name, 'w') as f:
         f.write(str(len(caches)) + "\n")
         for c_id, videos in enumerate(caches):
             if len(caches[c_id]) > 1:
-                f.write(f"{c_id} {' '.join(map(str, videos))}" + "\n")
+                f.write(f"{videos[0]} {' '.join(map(str, videos[1:]))}" + "\n")
 
 
