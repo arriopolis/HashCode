@@ -64,7 +64,3 @@ if __name__ == "__main__":
         N += n
         # print(lat_base,vid,end,N,score)
     print("Average time saved :", int(sum(scores)/N*1000), "microseconds")
-
-
-
-    return V,E,R,C,X,vidsize,endpoints,requests
