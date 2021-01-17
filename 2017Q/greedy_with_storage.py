@@ -8,6 +8,7 @@ V,E,R,C,X,vidsize,endpoints,requests = read_input(sys.argv[1])
 # per endpoint the caches sorted by latency (cache_id, latency)
 endpoint_cache_latency = { e_id:sorted([[cache[0], endpoint[0][0] - cache[1]] for cache in endpoint[1:]], key = lambda x: -x[1]) for e_id, endpoint in enumerate(endpoints)}
 
+print(endpoint_cache_latency[0])
 # Calc metric for all requests
 
 t = time.time()
@@ -18,7 +19,7 @@ for v_id, e_id, num_req in requests:
     else:
         c_id, latency = endpoint_cache_latency[e_id][0]
         # latency metric
-        metric = num_req*latency
+        metric = num_req*latency/vidsize[v_id]
 
         request_with_metric.append([v_id, e_id, num_req, metric, c_id])
 print(time.time() -t)
@@ -51,7 +52,7 @@ while len(request_with_metric) > 0:
                 break
         else:
             continue
-        metric = num_req * latency
+        metric = num_req * latency/vidsize[v_id]
         # insert at correct position
         for i, target in enumerate(request_with_metric):
             if target[3] < metric:
