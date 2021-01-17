@@ -41,7 +41,7 @@ def calc_score(caches, vidsize, endpoints, requests, V, X):
 
     video_caches = [set() for _ in range(V)]
     for cid,c in enumerate(caches):
-        for vid in c:
+        for vid in c[1:]:
             video_caches[vid].add(cid)
 
     endpoint_caches = [set([c for c,l in endpt[1:]]) for endpt in endpoints]
