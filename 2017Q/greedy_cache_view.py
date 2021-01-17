@@ -2,7 +2,6 @@ from check_sol import read_input
 import time
 import sys
 import heapq
-print(sys.argv[0])
 V,E,R,C,X,vidsize,endpoints,requests = read_input(sys.argv[1])
 
 endpoint_latencies = [{c : l for c,l in endpt[1:]} for endpt in endpoints]
