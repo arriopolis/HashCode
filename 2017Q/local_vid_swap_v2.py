@@ -23,8 +23,8 @@ if __name__ == "__main__":
     score = calc_score(caches, vidsize, endpoints, requests, V, X)
 
     count = 0
-    vid_in_idx = 0
-    vid_out_idx = len(vids)-1
+    # vid_in_idx = 0
+    # vid_out_idx = len(vids)-1
     for vid_in_idx in range(len(vids)):
         for vid_out_idx in range(len(vids)):
             vid_in = vids[vid_in_idx]
@@ -41,11 +41,11 @@ if __name__ == "__main__":
                     # Check cache size limit
                     if size - vidsize[vid_out] + vidsize[vid_in] > X:
                         break
-                    
+
                     # Update score
                     print('test')
                     score = calc_score(caches, vidsize, endpoints, requests, V, X)
-                    
+
                     caches[i].reverse()
                     caches[i].remove(vid_out)
                     caches[i].reverse()
@@ -58,7 +58,7 @@ if __name__ == "__main__":
                         caches[i].reverse()
                         caches[i].remove(vid_in)
                         caches[i].reverse()
-                        caches[i].append(vid_out)  
+                        caches[i].append(vid_out)
                     else:
                         print("New score:", score_new)
                         file_name = os.path.join(sys.argv[2][:-11]) + "_" + str(calc_score(caches, vidsize, endpoints, requests, V, X)) + '.out'
@@ -68,24 +68,12 @@ if __name__ == "__main__":
                                 if len(caches[c_id]) > 1:
                                     f.write(f"{videos[0]} {' '.join(map(str, videos[1:]))}" + "\n")
 
-            if count%2 == 0:
-                vid_in_idx += 1
-            else:
-                vid_out_idx -= 1
+            # if count%2 == 0:
+            #     vid_in_idx += 1
+            # else:
+            #     vid_out_idx -= 1
 
             if vid_out_idx < 0 or vid_in_idx >= len(vids):
                 break
 
             count += 1
-
-
-
-
-
-
-    
-
-
-
-
-        
