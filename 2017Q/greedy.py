@@ -16,8 +16,12 @@ endpoint_cache_latency = {
 max_endpoint_latency = {}
 
 for e_id, endpoint in enumerate(endpoints):
-    max_latency  = max(endpoint[1:], key = lambda x: endpoint[0][0]-x[1])
-    max_endpoint_latency[e_id] = [max_latency[0], endpoint[0][0]-max_latency[1]]
+    datacenter_latency, n_caches = endpoint[0]
+    if n_caches  == 0:
+        max_endpoint_latency[e_id] = [-1, 1000000000000]
+    else:
+        max_latency  = max(endpoint[1:], key = lambda x: datacenter_latency-x[1])
+        max_endpoint_latency[e_id] = [max_latency[0], endpoint[0][0]-max_latency[1]]
 
 t = time.time()
 request_with_metric = []
@@ -37,10 +41,15 @@ print(request_with_metric[:10])
 # add request to cache
 cache_size_left = [X for i in range(C)] # size of cache
 videos_in_cache = [set() for i in range(C)] # videos in cache
+print("n_metrics:", len(request_with_metric))
+k =0
 while len(request_with_metric) > 0:
-    print(len(request_with_metric))
-    v_id, e_id, num_req, metric, c_id = request_with_metric.pop()
-    print(metric)
+    k+=1
+    if (k %1000 == 0):
+        print(k,len(request_with_metric), "left")
+    v_id, e_id, num_req, metric, c_id = request_with_metric.pop(0)
+    if c_id == -1:
+        continue
     # check if request is still valid
     if v_id in videos_in_cache[c_id]:
         continue
@@ -52,8 +61,11 @@ while len(request_with_metric) > 0:
         else:
             continue
         metric = num_req * latency
-        request_with_metric.append([v_id, e_id, num_req, metric, c_id])
-        request_with_metric = sorted(request_with_metric, key = lambda x: x[3])[::-1]
+        # insert at correct position
+        for i, target in enumerate(request_with_metric):
+            if target[3] < metric:
+                break
+        request_with_metric.insert(i, [v_id, e_id, num_req, metric, c_id])
         continue
     # add video to cache:
     videos_in_cache[c_id].add(v_id)
