@@ -68,7 +68,7 @@ import os
 from check_sol_v2 import calc_score
 
 score = calc_score(caches, vidsize, endpoints, requests, V, X)
-file_name = os.path.join("output", '.'.join(sys.argv[1].split('.')[:-1])+'_'+str(score)+'_.out')
+file_name = os.path.join("output", '.'.join(sys.argv[1].split('.')[:-1])+'_'+str(score)+'.out')
 with open(file_name, 'w') as f:
     f.write(str(len(videos_in_cache))+"\n")
     for c_id, videos in enumerate(videos_in_cache):
