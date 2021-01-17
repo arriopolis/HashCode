@@ -5,31 +5,22 @@ print(sys.argv[0])
 V,E,R,C,X,vidsize,endpoints,requests = read_input(sys.argv[1])
 
 
-#                               c_id     datac_lat        c_late
-endpoint_cache_latency = {
-        e_id:sorted([[cache[0], endpoint[0][0] - cache[1]] for cache in endpoint[1:]], key = lambda x: -x[1]) for e_id, endpoint in enumerate(endpoints)}
+# per endpoint the caches sorted by latency (cache_id, latency)
+endpoint_cache_latency = { e_id:sorted([[cache[0], endpoint[0][0] - cache[1]] for cache in endpoint[1:]], key = lambda x: -x[1])[::-1] for e_id, endpoint in enumerate(endpoints)}
 
 # Calc metric for all requests
-
-
-
-max_endpoint_latency = {}
-
-for e_id, endpoint in enumerate(endpoints):
-    datacenter_latency, n_caches = endpoint[0]
-    if n_caches  == 0:
-        max_endpoint_latency[e_id] = [-1, 1000000000000]
-    else:
-        max_latency  = max(endpoint[1:], key = lambda x: datacenter_latency-x[1])
-        max_endpoint_latency[e_id] = [max_latency[0], endpoint[0][0]-max_latency[1]]
 
 t = time.time()
 request_with_metric = []
 for v_id, e_id, num_req in requests:
-    # latency metric
-    metric = num_req*max_endpoint_latency[e_id][1]
+    if len(endpoint_cache_latency[e_id]) == 0:
+        request_with_metric.append([v_id, e_id, num_req, 10000000000000000000000000, -1])
+    else:
+        c_id, latency = endpoint_cache_latency[e_id][0]
+        # latency metric
+        metric = num_req*latency
 
-    request_with_metric.append([v_id, e_id, num_req, metric, max_endpoint_latency[e_id][0]])
+        request_with_metric.append([v_id, e_id, num_req, metric, c_id])
 print(time.time() -t)
 
 #sort by metric
@@ -71,8 +62,13 @@ while len(request_with_metric) > 0:
     videos_in_cache[c_id].add(v_id)
     cache_size_left[c_id] -= vidsize[v_id]
 
+
+caches = [[i]+list(cache) for i, cache in enumerate(videos_in_cache)]
 import os
-file_name = os.path.join("output", '.'.join(sys.argv[1].split('.')[:-1])+'.out')
+from check_sol_v2 import calc_score
+
+score = calc_score(caches, vidsize, endpoints, requests, V, X)
+file_name = os.path.join("output", '.'.join(sys.argv[1].split('.')[:-1])+'_'+str(score)+'_.out')
 with open(file_name, 'w') as f:
     f.write(str(len(videos_in_cache))+"\n")
     for c_id, videos in enumerate(videos_in_cache):
