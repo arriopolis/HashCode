@@ -22,13 +22,12 @@ def print_plan(block):
 if __name__ == '__main__':
     import sys
     from read_input import read_input,reduce_same_layouts
+    from read_solution import Solution
 
-    h, w, d, b, residentials, services = read_input(sys.argv[1])
-    print(len(residentials))
-    reduced_residentials = reduce_same_layouts(residentials)
-    print(len(reduced_residentials))
-    print()
-    print(len(services))
-    reduced_utilities = reduce_same_layouts(services)
-    print(len(reduced_utilities))
+    # h, w, d, b, residentials, services = read_input(sys.argv[1])
+
+    solution = Solution(sys.argv[1])
+    solution.read_solution(sys.argv[2])
+    print(solution.determine_score())
+
 
