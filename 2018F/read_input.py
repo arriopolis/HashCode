@@ -12,7 +12,7 @@ def read_input(filename):
                 residentials.append((int(hp),int(wp),int(cp),block))
             else:
                 services.append((int(hp),int(wp),int(cp),block))
-    return residentials,services
+    return h,w,d,b,residentials,services
 
 if __name__ == '__main__':
     import sys
