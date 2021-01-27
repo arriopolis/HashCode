@@ -15,7 +15,8 @@ def read_input(filename):
             else:
                 services.append((count, int(hp),int(wp),int(cp),block))
             count += 1
-    return h,w,d,b,reduce_same_layouts(residentials),reduce_same_layouts(services)
+    # return h,w,d,b,reduce_same_layouts(residentials),reduce_same_layouts(services)
+    return h,w,d,b,reduce_same_layouts(residentials),services
 
 
 def reduce_same_layouts(layouts):

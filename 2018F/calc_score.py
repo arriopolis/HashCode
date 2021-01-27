@@ -1,7 +1,7 @@
 import sys
 from read_input import read_input
 
-def calc_score(h, w, d, b, residentials, services, buildings):
+def calc_score(h, w, d, b, residentials, services, buildings, debug = False):
     plans = [None]*max(idx+1 for idx,*_ in residentials + services)
     for idx,hp,wp,cp,block in residentials:
         plans[idx] = ('R',hp,wp,cp,block)
@@ -34,11 +34,11 @@ def calc_score(h, w, d, b, residentials, services, buildings):
                         if j+dj < 0: continue
                         if grid[i+di][j+dj] not in (0,-1):
                             ss.add(grid[i+di][j+dj])
-        print("Progress:", ctr, end = '\r')
+        if debug: print("Progress:", ctr, end = '\r')
         # print(idx,i,j,ss)
         score += len(ss) * plans[idx][3]
-    print()
-    print("Score:", score)
+    if debug: print()
+    if debug: print("Score:", score)
     return score
 
 if __name__ == "__main__":
