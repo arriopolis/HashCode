@@ -32,9 +32,30 @@ class Solution:
         for y in range(len(building_plan)):
             for x in range(len(building_plan[0])):
                 if building_plan[y][x]:
+                    if self.grid[r + y][w + x] != '.':
+                        sys.exit("OVERLAP")
                     self.grid[r + y][w + x] = index
                     building_coordinates += [[r + y, w + x]]
         self.building_coordinates += [building_coordinates]
+
+    def check_borders(self):
+        top = self.grid[0]
+        if not self.check_border(top):
+            sys.exit("BORDER NOT OK")
+        bottom = self.grid[-1]
+        if not self.check_border(bottom):
+            sys.exit("BORDER NOT OK")
+        left = [row[0] for row in self.grid]
+        if not self.check_border(left):
+            sys.exit("BORDER NOT OK")
+        right = [row[-1] for row in self.grid]
+        if not self.check_border(right):
+            sys.exit("BORDER NOT OK")
+
+    def check_border(self, border):
+        return len([value for value in border if value != "."]) > 0
+
+
 
     def print(self):
         for line in self.grid:
@@ -67,6 +88,8 @@ class Solution:
         return best_distance
 
     def determine_score(self):
+        self.check_borders()
+
         residential_building_indices = [ib for ib, building in enumerate(self.constructed_buildings) if building[0] in [residential[0] for residential in self.residentials]]
         utility_building_indices = [ib for ib, building in enumerate(self.constructed_buildings) if building[0] in [residential[0] for residential in self.utilities]]
         number_of_utility_types = max([utility[3] for utility in self.utilities]) + 1
