@@ -10,11 +10,12 @@ print("Total number of requests:", tot_requests)
 
 benefits = {}
 for i,(v_id, e_id, num_req) in enumerate(requests):
-    print(i+1, '/', len(requests), '            ',  end = '\r')
+    if i%1000 ==0:
+        print(i+1, '/', len(requests), '            ',  end = '\r')
     base_lat = endpoints[e_id][0][0]
     for c_id, lat in endpoints[e_id][1:]:
         if (v_id,c_id) not in benefits: benefits[(v_id,c_id)] = [0,[]]
-        benefits[(v_id,c_id)][0] += (base_lat - lat)*num_req
+        benefits[(v_id,c_id)][0] += (base_lat - lat)*num_req/vidsize[v_id]
         benefits[(v_id,c_id)][1].append((e_id,num_req,-1))
 q = sorted((-benefit,(v_id,c_id),endpts) for (v_id,c_id),[benefit,endpts] in benefits.items())
 
@@ -36,10 +37,10 @@ while q:
             l,c = min((l,c) for c,l in endpoints[endpt][1:] if v_id in videos_in_cache[c])
             oldl = endpoint_latencies[endpt][prev] if prev != -1 else endpoints[endpt][0][0]
             if l < endpoint_latencies[endpt][c_id]:
-                diff += (oldl - endpoint_latencies[endpt][c_id]) * num_req
+                diff += (oldl - endpoint_latencies[endpt][c_id]) * num_req/vidsize[v_id]
                 toreplace[(endpt,num_req,prev)] = None
             elif l < oldl:
-                diff += (oldl - l) * num_req
+                diff += (oldl - l) * num_req/vidsize[v_id]
                 toreplace[(endpt,num_req,prev)] = (endpt,num_req,c)
 
     if toreplace:

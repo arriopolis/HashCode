@@ -1,0 +1,212 @@
+<html>
+<head>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.16.1/vis.css" type="text/css" />
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.16.1/vis-network.min.js"> </script>
+<center>
+<h1>None</h1>
+</center>
+
+<!-- <link rel="stylesheet" href="../node_modules/vis/dist/vis.min.css" type="text/css" />
+<script type="text/javascript" src="../node_modules/vis/dist/vis.js"> </script>-->
+
+<style type="text/css">
+
+        #mynetwork {
+            width: 500px;
+            height: 500px;
+            background-color: #ffffff;
+            border: 1px solid lightgray;
+            position: relative;
+            float: left;
+        }
+
+        
+        #loadingBar {
+            position:absolute;
+            top:0px;
+            left:0px;
+            width: 500px;
+            height: 500px;
+            background-color:rgba(200,200,200,0.8);
+            -webkit-transition: all 0.5s ease;
+            -moz-transition: all 0.5s ease;
+            -ms-transition: all 0.5s ease;
+            -o-transition: all 0.5s ease;
+            transition: all 0.5s ease;
+            opacity:1;
+        }
+
+        #bar {
+            position:absolute;
+            top:0px;
+            left:0px;
+            width:20px;
+            height:20px;
+            margin:auto auto auto auto;
+            border-radius:11px;
+            border:2px solid rgba(30,30,30,0.05);
+            background: rgb(0, 173, 246); /* Old browsers */
+            box-shadow: 2px 0px 4px rgba(0,0,0,0.4);
+        }
+
+        #border {
+            position:absolute;
+            top:10px;
+            left:10px;
+            width:500px;
+            height:23px;
+            margin:auto auto auto auto;
+            box-shadow: 0px 0px 4px rgba(0,0,0,0.2);
+            border-radius:10px;
+        }
+
+        #text {
+            position:absolute;
+            top:8px;
+            left:530px;
+            width:30px;
+            height:50px;
+            margin:auto auto auto auto;
+            font-size:22px;
+            color: #000000;
+        }
+
+        div.outerBorder {
+            position:relative;
+            top:400px;
+            width:600px;
+            height:44px;
+            margin:auto auto auto auto;
+            border:8px solid rgba(0,0,0,0.1);
+            background: rgb(252,252,252); /* Old browsers */
+            background: -moz-linear-gradient(top,  rgba(252,252,252,1) 0%, rgba(237,237,237,1) 100%); /* FF3.6+ */
+            background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(252,252,252,1)), color-stop(100%,rgba(237,237,237,1))); /* Chrome,Safari4+ */
+            background: -webkit-linear-gradient(top,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* Chrome10+,Safari5.1+ */
+            background: -o-linear-gradient(top,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* Opera 11.10+ */
+            background: -ms-linear-gradient(top,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* IE10+ */
+            background: linear-gradient(to bottom,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* W3C */
+            filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fcfcfc', endColorstr='#ededed',GradientType=0 ); /* IE6-9 */
+            border-radius:72px;
+            box-shadow: 0px 0px 10px rgba(0,0,0,0.2);
+        }
+        
+
+        
+
+        
+</style>
+
+</head>
+
+<body>
+<div id = "mynetwork"></div>
+
+<div id="loadingBar">
+    <div class="outerBorder">
+        <div id="text">0%</div>
+        <div id="border">
+            <div id="bar"></div>
+        </div>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+
+    // initialize global variables.
+    var edges;
+    var nodes;
+    var network; 
+    var container;
+    var options, data;
+
+    
+    // This method is responsible for drawing the graph, returns the drawn network
+    function drawGraph() {
+        var container = document.getElementById('mynetwork');
+        
+        
+
+        // parsing and collecting nodes and edges from the python
+        nodes = new vis.DataSet([{"group": 1, "id": "endpoint_0", "label": "endpoint_0", "shape": "dot"}, {"group": 2, "id": "cache_0", "label": "cache_0", "shape": "dot"}, {"group": 2, "id": "cache_1", "label": "cache_1", "shape": "dot"}, {"group": 2, "id": "cache_2", "label": "cache_2", "shape": "dot"}, {"group": 2, "id": "cache_3", "label": "cache_3", "shape": "dot"}, {"group": 2, "id": "cache_4", "label": "cache_4", "shape": "dot"}, {"group": 2, "id": "cache_5", "label": "cache_5", "shape": "dot"}, {"group": 2, "id": "cache_6", "label": "cache_6", "shape": "dot"}, {"group": 1, "id": "endpoint_1", "label": "endpoint_1", "shape": "dot"}, {"group": 1, "id": "endpoint_2", "label": "endpoint_2", "shape": "dot"}, {"group": 1, "id": "endpoint_3", "label": "endpoint_3", "shape": "dot"}, {"group": 2, "id": "cache_7", "label": "cache_7", "shape": "dot"}, {"group": 1, "id": "endpoint_4", "label": "endpoint_4", "shape": "dot"}, {"group": 1, "id": "endpoint_5", "label": "endpoint_5", "shape": "dot"}, {"group": 1, "id": "endpoint_6", "label": "endpoint_6", "shape": "dot"}, {"group": 2, "id": "cache_8", "label": "cache_8", "shape": "dot"}, {"group": 2, "id": "cache_9", "label": "cache_9", "shape": "dot"}, {"group": 1, "id": "endpoint_7", "label": "endpoint_7", "shape": "dot"}, {"group": 1, "id": "endpoint_8", "label": "endpoint_8", "shape": "dot"}, {"group": 1, "id": "endpoint_9", "label": "endpoint_9", "shape": "dot"}, {"group": 1, "id": "endpoint_10", "label": "endpoint_10", "shape": "dot"}, {"group": 1, "id": "endpoint_11", "label": "endpoint_11", "shape": "dot"}, {"group": 1, "id": "endpoint_12", "label": "endpoint_12", "shape": "dot"}, {"group": 1, "id": "endpoint_13", "label": "endpoint_13", "shape": "dot"}, {"group": 1, "id": "endpoint_14", "label": "endpoint_14", "shape": "dot"}, {"group": 1, "id": "endpoint_15", "label": "endpoint_15", "shape": "dot"}, {"group": 1, "id": "endpoint_16", "label": "endpoint_16", "shape": "dot"}, {"group": 1, "id": "endpoint_17", "label": "endpoint_17", "shape": "dot"}, {"group": 1, "id": "endpoint_18", "label": "endpoint_18", "shape": "dot"}, {"group": 1, "id": "endpoint_19", "label": "endpoint_19", "shape": "dot"}, {"group": 1, "id": "endpoint_20", "label": "endpoint_20", "shape": "dot"}, {"group": 1, "id": "endpoint_21", "label": "endpoint_21", "shape": "dot"}, {"group": 1, "id": "endpoint_22", "label": "endpoint_22", "shape": "dot"}, {"group": 1, "id": "endpoint_23", "label": "endpoint_23", "shape": "dot"}, {"group": 1, "id": "endpoint_24", "label": "endpoint_24", "shape": "dot"}, {"group": 1, "id": "endpoint_25", "label": "endpoint_25", "shape": "dot"}, {"group": 1, "id": "endpoint_26", "label": "endpoint_26", "shape": "dot"}, {"group": 1, "id": "endpoint_27", "label": "endpoint_27", "shape": "dot"}, {"group": 1, "id": "endpoint_28", "label": "endpoint_28", "shape": "dot"}, {"group": 1, "id": "endpoint_29", "label": "endpoint_29", "shape": "dot"}, {"group": 1, "id": "endpoint_30", "label": "endpoint_30", "shape": "dot"}, {"group": 1, "id": "endpoint_31", "label": "endpoint_31", "shape": "dot"}, {"group": 1, "id": "endpoint_32", "label": "endpoint_32", "shape": "dot"}, {"group": 1, "id": "endpoint_33", "label": "endpoint_33", "shape": "dot"}, {"group": 1, "id": "endpoint_34", "label": "endpoint_34", "shape": "dot"}, {"group": 1, "id": "endpoint_35", "label": "endpoint_35", "shape": "dot"}, {"group": 1, "id": "endpoint_36", "label": "endpoint_36", "shape": "dot"}, {"group": 1, "id": "endpoint_37", "label": "endpoint_37", "shape": "dot"}, {"group": 1, "id": "endpoint_38", "label": "endpoint_38", "shape": "dot"}, {"group": 1, "id": "endpoint_39", "label": "endpoint_39", "shape": "dot"}, {"group": 1, "id": "endpoint_40", "label": "endpoint_40", "shape": "dot"}, {"group": 1, "id": "endpoint_41", "label": "endpoint_41", "shape": "dot"}, {"group": 1, "id": "endpoint_42", "label": "endpoint_42", "shape": "dot"}, {"group": 1, "id": "endpoint_43", "label": "endpoint_43", "shape": "dot"}, {"group": 1, "id": "endpoint_44", "label": "endpoint_44", "shape": "dot"}, {"group": 1, "id": "endpoint_45", "label": "endpoint_45", "shape": "dot"}, {"group": 1, "id": "endpoint_46", "label": "endpoint_46", "shape": "dot"}, {"group": 1, "id": "endpoint_47", "label": "endpoint_47", "shape": "dot"}, {"group": 1, "id": "endpoint_48", "label": "endpoint_48", "shape": "dot"}, {"group": 1, "id": "endpoint_49", "label": "endpoint_49", "shape": "dot"}, {"group": 1, "id": "endpoint_50", "label": "endpoint_50", "shape": "dot"}, {"group": 1, "id": "endpoint_51", "label": "endpoint_51", "shape": "dot"}, {"group": 1, "id": "endpoint_52", "label": "endpoint_52", "shape": "dot"}, {"group": 1, "id": "endpoint_53", "label": "endpoint_53", "shape": "dot"}, {"group": 1, "id": "endpoint_54", "label": "endpoint_54", "shape": "dot"}, {"group": 1, "id": "endpoint_55", "label": "endpoint_55", "shape": "dot"}, {"group": 1, "id": "endpoint_56", "label": "endpoint_56", "shape": "dot"}, {"group": 1, "id": "endpoint_57", "label": "endpoint_57", "shape": "dot"}, {"group": 1, "id": "endpoint_58", "label": "endpoint_58", "shape": "dot"}, {"group": 1, "id": "endpoint_59", "label": "endpoint_59", "shape": "dot"}, {"group": 1, "id": "endpoint_60", "label": "endpoint_60", "shape": "dot"}, {"group": 1, "id": "endpoint_61", "label": "endpoint_61", "shape": "dot"}, {"group": 1, "id": "endpoint_62", "label": "endpoint_62", "shape": "dot"}, {"group": 1, "id": "endpoint_63", "label": "endpoint_63", "shape": "dot"}, {"group": 1, "id": "endpoint_64", "label": "endpoint_64", "shape": "dot"}, {"group": 1, "id": "endpoint_65", "label": "endpoint_65", "shape": "dot"}, {"group": 1, "id": "endpoint_66", "label": "endpoint_66", "shape": "dot"}, {"group": 1, "id": "endpoint_67", "label": "endpoint_67", "shape": "dot"}, {"group": 1, "id": "endpoint_68", "label": "endpoint_68", "shape": "dot"}, {"group": 1, "id": "endpoint_69", "label": "endpoint_69", "shape": "dot"}, {"group": 1, "id": "endpoint_70", "label": "endpoint_70", "shape": "dot"}, {"group": 1, "id": "endpoint_71", "label": "endpoint_71", "shape": "dot"}, {"group": 1, "id": "endpoint_72", "label": "endpoint_72", "shape": "dot"}, {"group": 1, "id": "endpoint_73", "label": "endpoint_73", "shape": "dot"}, {"group": 1, "id": "endpoint_74", "label": "endpoint_74", "shape": "dot"}, {"group": 1, "id": "endpoint_75", "label": "endpoint_75", "shape": "dot"}, {"group": 1, "id": "endpoint_76", "label": "endpoint_76", "shape": "dot"}, {"group": 1, "id": "endpoint_77", "label": "endpoint_77", "shape": "dot"}, {"group": 1, "id": "endpoint_78", "label": "endpoint_78", "shape": "dot"}, {"group": 1, "id": "endpoint_79", "label": "endpoint_79", "shape": "dot"}, {"group": 1, "id": "endpoint_80", "label": "endpoint_80", "shape": "dot"}, {"group": 1, "id": "endpoint_81", "label": "endpoint_81", "shape": "dot"}, {"group": 1, "id": "endpoint_82", "label": "endpoint_82", "shape": "dot"}, {"group": 1, "id": "endpoint_83", "label": "endpoint_83", "shape": "dot"}, {"group": 1, "id": "endpoint_84", "label": "endpoint_84", "shape": "dot"}, {"group": 1, "id": "endpoint_85", "label": "endpoint_85", "shape": "dot"}, {"group": 1, "id": "endpoint_86", "label": "endpoint_86", "shape": "dot"}, {"group": 1, "id": "endpoint_87", "label": "endpoint_87", "shape": "dot"}, {"group": 1, "id": "endpoint_88", "label": "endpoint_88", "shape": "dot"}, {"group": 1, "id": "endpoint_89", "label": "endpoint_89", "shape": "dot"}, {"group": 1, "id": "endpoint_90", "label": "endpoint_90", "shape": "dot"}, {"group": 1, "id": "endpoint_91", "label": "endpoint_91", "shape": "dot"}, {"group": 1, "id": "endpoint_92", "label": "endpoint_92", "shape": "dot"}, {"group": 1, "id": "endpoint_93", "label": "endpoint_93", "shape": "dot"}, {"group": 1, "id": "endpoint_94", "label": "endpoint_94", "shape": "dot"}, {"group": 1, "id": "endpoint_95", "label": "endpoint_95", "shape": "dot"}, {"group": 1, "id": "endpoint_96", "label": "endpoint_96", "shape": "dot"}, {"group": 1, "id": "endpoint_97", "label": "endpoint_97", "shape": "dot"}, {"group": 1, "id": "endpoint_98", "label": "endpoint_98", "shape": "dot"}, {"group": 1, "id": "endpoint_99", "label": "endpoint_99", "shape": "dot"}]);
+        edges = new vis.DataSet([{"from": "endpoint_0", "to": "cache_0"}, {"from": "endpoint_0", "to": "cache_1"}, {"from": "endpoint_0", "to": "cache_2"}, {"from": "endpoint_0", "to": "cache_3"}, {"from": "endpoint_0", "to": "cache_4"}, {"from": "endpoint_0", "to": "cache_5"}, {"from": "endpoint_0", "to": "cache_6"}, {"from": "endpoint_1", "to": "cache_0"}, {"from": "endpoint_1", "to": "cache_1"}, {"from": "endpoint_2", "to": "cache_0"}, {"from": "endpoint_2", "to": "cache_1"}, {"from": "endpoint_2", "to": "cache_2"}, {"from": "endpoint_3", "to": "cache_0"}, {"from": "endpoint_3", "to": "cache_1"}, {"from": "endpoint_3", "to": "cache_2"}, {"from": "endpoint_3", "to": "cache_3"}, {"from": "endpoint_3", "to": "cache_4"}, {"from": "endpoint_3", "to": "cache_5"}, {"from": "endpoint_3", "to": "cache_6"}, {"from": "endpoint_3", "to": "cache_7"}, {"from": "endpoint_4", "to": "cache_0"}, {"from": "endpoint_4", "to": "cache_1"}, {"from": "endpoint_4", "to": "cache_2"}, {"from": "endpoint_4", "to": "cache_3"}, {"from": "endpoint_4", "to": "cache_4"}, {"from": "endpoint_4", "to": "cache_5"}, {"from": "endpoint_5", "to": "cache_0"}, {"from": "endpoint_5", "to": "cache_1"}, {"from": "endpoint_5", "to": "cache_2"}, {"from": "endpoint_5", "to": "cache_3"}, {"from": "endpoint_5", "to": "cache_4"}, {"from": "endpoint_5", "to": "cache_5"}, {"from": "endpoint_6", "to": "cache_0"}, {"from": "endpoint_6", "to": "cache_1"}, {"from": "endpoint_6", "to": "cache_2"}, {"from": "endpoint_6", "to": "cache_3"}, {"from": "endpoint_6", "to": "cache_4"}, {"from": "endpoint_6", "to": "cache_5"}, {"from": "endpoint_6", "to": "cache_6"}, {"from": "endpoint_6", "to": "cache_7"}, {"from": "endpoint_6", "to": "cache_8"}, {"from": "endpoint_6", "to": "cache_9"}, {"from": "endpoint_7", "to": "cache_0"}, {"from": "endpoint_7", "to": "cache_1"}, {"from": "endpoint_7", "to": "cache_2"}, {"from": "endpoint_7", "to": "cache_3"}, {"from": "endpoint_7", "to": "cache_4"}, {"from": "endpoint_7", "to": "cache_5"}, {"from": "endpoint_7", "to": "cache_6"}, {"from": "endpoint_7", "to": "cache_7"}, {"from": "endpoint_7", "to": "cache_8"}, {"from": "endpoint_8", "to": "cache_0"}, {"from": "endpoint_9", "to": "cache_0"}, {"from": "endpoint_9", "to": "cache_1"}, {"from": "endpoint_9", "to": "cache_2"}, {"from": "endpoint_9", "to": "cache_3"}, {"from": "endpoint_9", "to": "cache_4"}, {"from": "endpoint_10", "to": "cache_0"}, {"from": "endpoint_10", "to": "cache_1"}, {"from": "endpoint_10", "to": "cache_2"}, {"from": "endpoint_10", "to": "cache_3"}, {"from": "endpoint_10", "to": "cache_4"}, {"from": "endpoint_11", "to": "cache_0"}, {"from": "endpoint_11", "to": "cache_1"}, {"from": "endpoint_12", "to": "cache_0"}, {"from": "endpoint_13", "to": "cache_0"}, {"from": "endpoint_13", "to": "cache_1"}, {"from": "endpoint_14", "to": "cache_0"}, {"from": "endpoint_14", "to": "cache_1"}, {"from": "endpoint_14", "to": "cache_2"}, {"from": "endpoint_14", "to": "cache_3"}, {"from": "endpoint_14", "to": "cache_4"}, {"from": "endpoint_14", "to": "cache_5"}, {"from": "endpoint_14", "to": "cache_6"}, {"from": "endpoint_14", "to": "cache_7"}, {"from": "endpoint_14", "to": "cache_8"}, {"from": "endpoint_15", "to": "cache_0"}, {"from": "endpoint_15", "to": "cache_1"}, {"from": "endpoint_15", "to": "cache_2"}, {"from": "endpoint_15", "to": "cache_3"}, {"from": "endpoint_16", "to": "cache_0"}, {"from": "endpoint_16", "to": "cache_1"}, {"from": "endpoint_16", "to": "cache_2"}, {"from": "endpoint_16", "to": "cache_3"}, {"from": "endpoint_17", "to": "cache_0"}, {"from": "endpoint_17", "to": "cache_1"}, {"from": "endpoint_17", "to": "cache_2"}, {"from": "endpoint_17", "to": "cache_3"}, {"from": "endpoint_17", "to": "cache_4"}, {"from": "endpoint_18", "to": "cache_0"}, {"from": "endpoint_18", "to": "cache_1"}, {"from": "endpoint_18", "to": "cache_2"}, {"from": "endpoint_18", "to": "cache_3"}, {"from": "endpoint_18", "to": "cache_4"}, {"from": "endpoint_18", "to": "cache_5"}, {"from": "endpoint_20", "to": "cache_0"}, {"from": "endpoint_20", "to": "cache_1"}, {"from": "endpoint_20", "to": "cache_2"}, {"from": "endpoint_20", "to": "cache_3"}, {"from": "endpoint_20", "to": "cache_4"}, {"from": "endpoint_20", "to": "cache_5"}, {"from": "endpoint_21", "to": "cache_0"}, {"from": "endpoint_21", "to": "cache_1"}, {"from": "endpoint_23", "to": "cache_0"}, {"from": "endpoint_23", "to": "cache_1"}, {"from": "endpoint_23", "to": "cache_2"}, {"from": "endpoint_23", "to": "cache_3"}, {"from": "endpoint_23", "to": "cache_4"}, {"from": "endpoint_23", "to": "cache_5"}, {"from": "endpoint_23", "to": "cache_6"}, {"from": "endpoint_23", "to": "cache_7"}, {"from": "endpoint_23", "to": "cache_8"}, {"from": "endpoint_23", "to": "cache_9"}, {"from": "endpoint_24", "to": "cache_0"}, {"from": "endpoint_25", "to": "cache_0"}, {"from": "endpoint_25", "to": "cache_1"}, {"from": "endpoint_25", "to": "cache_2"}, {"from": "endpoint_25", "to": "cache_3"}, {"from": "endpoint_25", "to": "cache_4"}, {"from": "endpoint_25", "to": "cache_5"}, {"from": "endpoint_25", "to": "cache_6"}, {"from": "endpoint_26", "to": "cache_0"}, {"from": "endpoint_26", "to": "cache_1"}, {"from": "endpoint_26", "to": "cache_2"}, {"from": "endpoint_26", "to": "cache_3"}, {"from": "endpoint_27", "to": "cache_0"}, {"from": "endpoint_27", "to": "cache_1"}, {"from": "endpoint_27", "to": "cache_2"}, {"from": "endpoint_28", "to": "cache_0"}, {"from": "endpoint_28", "to": "cache_1"}, {"from": "endpoint_28", "to": "cache_2"}, {"from": "endpoint_28", "to": "cache_3"}, {"from": "endpoint_28", "to": "cache_4"}, {"from": "endpoint_28", "to": "cache_5"}, {"from": "endpoint_28", "to": "cache_6"}, {"from": "endpoint_28", "to": "cache_7"}, {"from": "endpoint_29", "to": "cache_0"}, {"from": "endpoint_29", "to": "cache_1"}, {"from": "endpoint_29", "to": "cache_2"}, {"from": "endpoint_29", "to": "cache_3"}, {"from": "endpoint_29", "to": "cache_4"}, {"from": "endpoint_29", "to": "cache_5"}, {"from": "endpoint_29", "to": "cache_6"}, {"from": "endpoint_29", "to": "cache_7"}, {"from": "endpoint_30", "to": "cache_0"}, {"from": "endpoint_30", "to": "cache_1"}, {"from": "endpoint_30", "to": "cache_2"}, {"from": "endpoint_30", "to": "cache_3"}, {"from": "endpoint_30", "to": "cache_4"}, {"from": "endpoint_30", "to": "cache_5"}, {"from": "endpoint_30", "to": "cache_6"}, {"from": "endpoint_30", "to": "cache_7"}, {"from": "endpoint_30", "to": "cache_8"}, {"from": "endpoint_30", "to": "cache_9"}, {"from": "endpoint_31", "to": "cache_0"}, {"from": "endpoint_31", "to": "cache_1"}, {"from": "endpoint_31", "to": "cache_2"}, {"from": "endpoint_31", "to": "cache_3"}, {"from": "endpoint_31", "to": "cache_4"}, {"from": "endpoint_31", "to": "cache_5"}, {"from": "endpoint_31", "to": "cache_6"}, {"from": "endpoint_31", "to": "cache_7"}, {"from": "endpoint_32", "to": "cache_0"}, {"from": "endpoint_32", "to": "cache_1"}, {"from": "endpoint_32", "to": "cache_2"}, {"from": "endpoint_32", "to": "cache_3"}, {"from": "endpoint_32", "to": "cache_4"}, {"from": "endpoint_32", "to": "cache_5"}, {"from": "endpoint_32", "to": "cache_6"}, {"from": "endpoint_32", "to": "cache_7"}, {"from": "endpoint_32", "to": "cache_8"}, {"from": "endpoint_33", "to": "cache_0"}, {"from": "endpoint_33", "to": "cache_1"}, {"from": "endpoint_33", "to": "cache_2"}, {"from": "endpoint_33", "to": "cache_3"}, {"from": "endpoint_33", "to": "cache_4"}, {"from": "endpoint_33", "to": "cache_5"}, {"from": "endpoint_33", "to": "cache_6"}, {"from": "endpoint_33", "to": "cache_7"}, {"from": "endpoint_33", "to": "cache_8"}, {"from": "endpoint_34", "to": "cache_0"}, {"from": "endpoint_35", "to": "cache_0"}, {"from": "endpoint_35", "to": "cache_1"}, {"from": "endpoint_35", "to": "cache_2"}, {"from": "endpoint_35", "to": "cache_3"}, {"from": "endpoint_35", "to": "cache_4"}, {"from": "endpoint_36", "to": "cache_0"}, {"from": "endpoint_36", "to": "cache_1"}, {"from": "endpoint_36", "to": "cache_2"}, {"from": "endpoint_36", "to": "cache_3"}, {"from": "endpoint_36", "to": "cache_4"}, {"from": "endpoint_36", "to": "cache_5"}, {"from": "endpoint_36", "to": "cache_6"}, {"from": "endpoint_37", "to": "cache_0"}, {"from": "endpoint_37", "to": "cache_1"}, {"from": "endpoint_38", "to": "cache_0"}, {"from": "endpoint_38", "to": "cache_1"}, {"from": "endpoint_38", "to": "cache_2"}, {"from": "endpoint_38", "to": "cache_3"}, {"from": "endpoint_38", "to": "cache_4"}, {"from": "endpoint_38", "to": "cache_5"}, {"from": "endpoint_38", "to": "cache_6"}, {"from": "endpoint_39", "to": "cache_0"}, {"from": "endpoint_39", "to": "cache_1"}, {"from": "endpoint_39", "to": "cache_2"}, {"from": "endpoint_39", "to": "cache_3"}, {"from": "endpoint_39", "to": "cache_4"}, {"from": "endpoint_39", "to": "cache_5"}, {"from": "endpoint_39", "to": "cache_6"}, {"from": "endpoint_39", "to": "cache_7"}, {"from": "endpoint_39", "to": "cache_8"}, {"from": "endpoint_41", "to": "cache_0"}, {"from": "endpoint_42", "to": "cache_0"}, {"from": "endpoint_42", "to": "cache_1"}, {"from": "endpoint_43", "to": "cache_0"}, {"from": "endpoint_43", "to": "cache_1"}, {"from": "endpoint_44", "to": "cache_0"}, {"from": "endpoint_44", "to": "cache_1"}, {"from": "endpoint_44", "to": "cache_2"}, {"from": "endpoint_44", "to": "cache_3"}, {"from": "endpoint_44", "to": "cache_4"}, {"from": "endpoint_44", "to": "cache_5"}, {"from": "endpoint_44", "to": "cache_6"}, {"from": "endpoint_45", "to": "cache_0"}, {"from": "endpoint_45", "to": "cache_1"}, {"from": "endpoint_45", "to": "cache_2"}, {"from": "endpoint_45", "to": "cache_3"}, {"from": "endpoint_45", "to": "cache_4"}, {"from": "endpoint_45", "to": "cache_5"}, {"from": "endpoint_45", "to": "cache_6"}, {"from": "endpoint_45", "to": "cache_7"}, {"from": "endpoint_46", "to": "cache_0"}, {"from": "endpoint_47", "to": "cache_0"}, {"from": "endpoint_47", "to": "cache_1"}, {"from": "endpoint_47", "to": "cache_2"}, {"from": "endpoint_47", "to": "cache_3"}, {"from": "endpoint_48", "to": "cache_0"}, {"from": "endpoint_48", "to": "cache_1"}, {"from": "endpoint_48", "to": "cache_2"}, {"from": "endpoint_48", "to": "cache_3"}, {"from": "endpoint_48", "to": "cache_4"}, {"from": "endpoint_48", "to": "cache_5"}, {"from": "endpoint_48", "to": "cache_6"}, {"from": "endpoint_49", "to": "cache_0"}, {"from": "endpoint_49", "to": "cache_1"}, {"from": "endpoint_49", "to": "cache_2"}, {"from": "endpoint_49", "to": "cache_3"}, {"from": "endpoint_49", "to": "cache_4"}, {"from": "endpoint_52", "to": "cache_0"}, {"from": "endpoint_52", "to": "cache_1"}, {"from": "endpoint_52", "to": "cache_2"}, {"from": "endpoint_52", "to": "cache_3"}, {"from": "endpoint_52", "to": "cache_4"}, {"from": "endpoint_53", "to": "cache_0"}, {"from": "endpoint_53", "to": "cache_1"}, {"from": "endpoint_53", "to": "cache_2"}, {"from": "endpoint_53", "to": "cache_3"}, {"from": "endpoint_53", "to": "cache_4"}, {"from": "endpoint_54", "to": "cache_0"}, {"from": "endpoint_54", "to": "cache_1"}, {"from": "endpoint_55", "to": "cache_0"}, {"from": "endpoint_55", "to": "cache_1"}, {"from": "endpoint_55", "to": "cache_2"}, {"from": "endpoint_56", "to": "cache_0"}, {"from": "endpoint_56", "to": "cache_1"}, {"from": "endpoint_56", "to": "cache_2"}, {"from": "endpoint_56", "to": "cache_3"}, {"from": "endpoint_56", "to": "cache_4"}, {"from": "endpoint_56", "to": "cache_5"}, {"from": "endpoint_56", "to": "cache_6"}, {"from": "endpoint_56", "to": "cache_7"}, {"from": "endpoint_56", "to": "cache_8"}, {"from": "endpoint_56", "to": "cache_9"}, {"from": "endpoint_57", "to": "cache_0"}, {"from": "endpoint_57", "to": "cache_1"}, {"from": "endpoint_57", "to": "cache_2"}, {"from": "endpoint_57", "to": "cache_3"}, {"from": "endpoint_57", "to": "cache_4"}, {"from": "endpoint_57", "to": "cache_5"}, {"from": "endpoint_57", "to": "cache_6"}, {"from": "endpoint_57", "to": "cache_7"}, {"from": "endpoint_57", "to": "cache_8"}, {"from": "endpoint_57", "to": "cache_9"}, {"from": "endpoint_59", "to": "cache_0"}, {"from": "endpoint_59", "to": "cache_1"}, {"from": "endpoint_59", "to": "cache_2"}, {"from": "endpoint_59", "to": "cache_3"}, {"from": "endpoint_59", "to": "cache_4"}, {"from": "endpoint_59", "to": "cache_5"}, {"from": "endpoint_60", "to": "cache_0"}, {"from": "endpoint_60", "to": "cache_1"}, {"from": "endpoint_60", "to": "cache_2"}, {"from": "endpoint_60", "to": "cache_3"}, {"from": "endpoint_60", "to": "cache_4"}, {"from": "endpoint_60", "to": "cache_5"}, {"from": "endpoint_60", "to": "cache_6"}, {"from": "endpoint_60", "to": "cache_7"}, {"from": "endpoint_60", "to": "cache_8"}, {"from": "endpoint_61", "to": "cache_0"}, {"from": "endpoint_61", "to": "cache_1"}, {"from": "endpoint_61", "to": "cache_2"}, {"from": "endpoint_61", "to": "cache_3"}, {"from": "endpoint_61", "to": "cache_4"}, {"from": "endpoint_61", "to": "cache_5"}, {"from": "endpoint_61", "to": "cache_6"}, {"from": "endpoint_61", "to": "cache_7"}, {"from": "endpoint_61", "to": "cache_8"}, {"from": "endpoint_61", "to": "cache_9"}, {"from": "endpoint_62", "to": "cache_0"}, {"from": "endpoint_62", "to": "cache_1"}, {"from": "endpoint_62", "to": "cache_2"}, {"from": "endpoint_62", "to": "cache_3"}, {"from": "endpoint_62", "to": "cache_4"}, {"from": "endpoint_62", "to": "cache_5"}, {"from": "endpoint_62", "to": "cache_6"}, {"from": "endpoint_63", "to": "cache_0"}, {"from": "endpoint_63", "to": "cache_1"}, {"from": "endpoint_63", "to": "cache_2"}, {"from": "endpoint_64", "to": "cache_0"}, {"from": "endpoint_65", "to": "cache_0"}, {"from": "endpoint_66", "to": "cache_0"}, {"from": "endpoint_66", "to": "cache_1"}, {"from": "endpoint_66", "to": "cache_2"}, {"from": "endpoint_66", "to": "cache_3"}, {"from": "endpoint_66", "to": "cache_4"}, {"from": "endpoint_66", "to": "cache_5"}, {"from": "endpoint_66", "to": "cache_6"}, {"from": "endpoint_66", "to": "cache_7"}, {"from": "endpoint_66", "to": "cache_8"}, {"from": "endpoint_66", "to": "cache_9"}, {"from": "endpoint_67", "to": "cache_0"}, {"from": "endpoint_67", "to": "cache_1"}, {"from": "endpoint_67", "to": "cache_2"}, {"from": "endpoint_67", "to": "cache_3"}, {"from": "endpoint_67", "to": "cache_4"}, {"from": "endpoint_67", "to": "cache_5"}, {"from": "endpoint_67", "to": "cache_6"}, {"from": "endpoint_67", "to": "cache_7"}, {"from": "endpoint_67", "to": "cache_8"}, {"from": "endpoint_68", "to": "cache_0"}, {"from": "endpoint_68", "to": "cache_1"}, {"from": "endpoint_68", "to": "cache_2"}, {"from": "endpoint_68", "to": "cache_3"}, {"from": "endpoint_68", "to": "cache_4"}, {"from": "endpoint_68", "to": "cache_5"}, {"from": "endpoint_68", "to": "cache_6"}, {"from": "endpoint_69", "to": "cache_0"}, {"from": "endpoint_69", "to": "cache_1"}, {"from": "endpoint_69", "to": "cache_2"}, {"from": "endpoint_69", "to": "cache_3"}, {"from": "endpoint_70", "to": "cache_0"}, {"from": "endpoint_70", "to": "cache_1"}, {"from": "endpoint_70", "to": "cache_2"}, {"from": "endpoint_70", "to": "cache_3"}, {"from": "endpoint_70", "to": "cache_4"}, {"from": "endpoint_70", "to": "cache_5"}, {"from": "endpoint_70", "to": "cache_6"}, {"from": "endpoint_70", "to": "cache_7"}, {"from": "endpoint_70", "to": "cache_8"}, {"from": "endpoint_71", "to": "cache_0"}, {"from": "endpoint_71", "to": "cache_1"}, {"from": "endpoint_71", "to": "cache_2"}, {"from": "endpoint_71", "to": "cache_3"}, {"from": "endpoint_71", "to": "cache_4"}, {"from": "endpoint_71", "to": "cache_5"}, {"from": "endpoint_71", "to": "cache_6"}, {"from": "endpoint_71", "to": "cache_7"}, {"from": "endpoint_72", "to": "cache_0"}, {"from": "endpoint_72", "to": "cache_1"}, {"from": "endpoint_72", "to": "cache_2"}, {"from": "endpoint_72", "to": "cache_3"}, {"from": "endpoint_72", "to": "cache_4"}, {"from": "endpoint_72", "to": "cache_5"}, {"from": "endpoint_72", "to": "cache_6"}, {"from": "endpoint_72", "to": "cache_7"}, {"from": "endpoint_73", "to": "cache_0"}, {"from": "endpoint_73", "to": "cache_1"}, {"from": "endpoint_73", "to": "cache_2"}, {"from": "endpoint_74", "to": "cache_0"}, {"from": "endpoint_74", "to": "cache_1"}, {"from": "endpoint_74", "to": "cache_2"}, {"from": "endpoint_74", "to": "cache_3"}, {"from": "endpoint_74", "to": "cache_4"}, {"from": "endpoint_74", "to": "cache_5"}, {"from": "endpoint_75", "to": "cache_0"}, {"from": "endpoint_75", "to": "cache_1"}, {"from": "endpoint_75", "to": "cache_2"}, {"from": "endpoint_75", "to": "cache_3"}, {"from": "endpoint_75", "to": "cache_4"}, {"from": "endpoint_75", "to": "cache_5"}, {"from": "endpoint_75", "to": "cache_6"}, {"from": "endpoint_75", "to": "cache_7"}, {"from": "endpoint_75", "to": "cache_8"}, {"from": "endpoint_76", "to": "cache_0"}, {"from": "endpoint_76", "to": "cache_1"}, {"from": "endpoint_76", "to": "cache_2"}, {"from": "endpoint_76", "to": "cache_3"}, {"from": "endpoint_76", "to": "cache_4"}, {"from": "endpoint_76", "to": "cache_5"}, {"from": "endpoint_76", "to": "cache_6"}, {"from": "endpoint_76", "to": "cache_7"}, {"from": "endpoint_77", "to": "cache_0"}, {"from": "endpoint_77", "to": "cache_1"}, {"from": "endpoint_77", "to": "cache_2"}, {"from": "endpoint_77", "to": "cache_3"}, {"from": "endpoint_77", "to": "cache_4"}, {"from": "endpoint_77", "to": "cache_5"}, {"from": "endpoint_77", "to": "cache_6"}, {"from": "endpoint_77", "to": "cache_7"}, {"from": "endpoint_77", "to": "cache_8"}, {"from": "endpoint_77", "to": "cache_9"}, {"from": "endpoint_78", "to": "cache_0"}, {"from": "endpoint_78", "to": "cache_1"}, {"from": "endpoint_78", "to": "cache_2"}, {"from": "endpoint_78", "to": "cache_3"}, {"from": "endpoint_78", "to": "cache_4"}, {"from": "endpoint_78", "to": "cache_5"}, {"from": "endpoint_78", "to": "cache_6"}, {"from": "endpoint_78", "to": "cache_7"}, {"from": "endpoint_79", "to": "cache_0"}, {"from": "endpoint_79", "to": "cache_1"}, {"from": "endpoint_79", "to": "cache_2"}, {"from": "endpoint_80", "to": "cache_0"}, {"from": "endpoint_80", "to": "cache_1"}, {"from": "endpoint_80", "to": "cache_2"}, {"from": "endpoint_80", "to": "cache_3"}, {"from": "endpoint_80", "to": "cache_4"}, {"from": "endpoint_80", "to": "cache_5"}, {"from": "endpoint_82", "to": "cache_0"}, {"from": "endpoint_83", "to": "cache_0"}, {"from": "endpoint_83", "to": "cache_1"}, {"from": "endpoint_83", "to": "cache_2"}, {"from": "endpoint_83", "to": "cache_3"}, {"from": "endpoint_83", "to": "cache_4"}, {"from": "endpoint_83", "to": "cache_5"}, {"from": "endpoint_83", "to": "cache_6"}, {"from": "endpoint_84", "to": "cache_0"}, {"from": "endpoint_84", "to": "cache_1"}, {"from": "endpoint_84", "to": "cache_2"}, {"from": "endpoint_84", "to": "cache_3"}, {"from": "endpoint_84", "to": "cache_4"}, {"from": "endpoint_84", "to": "cache_5"}, {"from": "endpoint_84", "to": "cache_6"}, {"from": "endpoint_84", "to": "cache_7"}, {"from": "endpoint_84", "to": "cache_8"}, {"from": "endpoint_84", "to": "cache_9"}, {"from": "endpoint_85", "to": "cache_0"}, {"from": "endpoint_85", "to": "cache_1"}, {"from": "endpoint_85", "to": "cache_2"}, {"from": "endpoint_85", "to": "cache_3"}, {"from": "endpoint_85", "to": "cache_4"}, {"from": "endpoint_86", "to": "cache_0"}, {"from": "endpoint_86", "to": "cache_1"}, {"from": "endpoint_86", "to": "cache_2"}, {"from": "endpoint_87", "to": "cache_0"}, {"from": "endpoint_87", "to": "cache_1"}, {"from": "endpoint_87", "to": "cache_2"}, {"from": "endpoint_87", "to": "cache_3"}, {"from": "endpoint_87", "to": "cache_4"}, {"from": "endpoint_87", "to": "cache_5"}, {"from": "endpoint_87", "to": "cache_6"}, {"from": "endpoint_87", "to": "cache_7"}, {"from": "endpoint_87", "to": "cache_8"}, {"from": "endpoint_87", "to": "cache_9"}, {"from": "endpoint_88", "to": "cache_0"}, {"from": "endpoint_88", "to": "cache_1"}, {"from": "endpoint_89", "to": "cache_0"}, {"from": "endpoint_89", "to": "cache_1"}, {"from": "endpoint_89", "to": "cache_2"}, {"from": "endpoint_89", "to": "cache_3"}, {"from": "endpoint_89", "to": "cache_4"}, {"from": "endpoint_89", "to": "cache_5"}, {"from": "endpoint_89", "to": "cache_6"}, {"from": "endpoint_89", "to": "cache_7"}, {"from": "endpoint_90", "to": "cache_0"}, {"from": "endpoint_91", "to": "cache_0"}, {"from": "endpoint_91", "to": "cache_1"}, {"from": "endpoint_92", "to": "cache_0"}, {"from": "endpoint_92", "to": "cache_1"}, {"from": "endpoint_92", "to": "cache_2"}, {"from": "endpoint_92", "to": "cache_3"}, {"from": "endpoint_92", "to": "cache_4"}, {"from": "endpoint_92", "to": "cache_5"}, {"from": "endpoint_93", "to": "cache_0"}, {"from": "endpoint_93", "to": "cache_1"}, {"from": "endpoint_93", "to": "cache_2"}, {"from": "endpoint_94", "to": "cache_0"}, {"from": "endpoint_94", "to": "cache_1"}, {"from": "endpoint_94", "to": "cache_2"}, {"from": "endpoint_95", "to": "cache_0"}, {"from": "endpoint_95", "to": "cache_1"}, {"from": "endpoint_95", "to": "cache_2"}, {"from": "endpoint_95", "to": "cache_3"}, {"from": "endpoint_96", "to": "cache_0"}, {"from": "endpoint_96", "to": "cache_1"}, {"from": "endpoint_96", "to": "cache_2"}, {"from": "endpoint_96", "to": "cache_3"}, {"from": "endpoint_96", "to": "cache_4"}, {"from": "endpoint_96", "to": "cache_5"}, {"from": "endpoint_96", "to": "cache_6"}, {"from": "endpoint_96", "to": "cache_7"}, {"from": "endpoint_96", "to": "cache_8"}, {"from": "endpoint_97", "to": "cache_0"}, {"from": "endpoint_98", "to": "cache_0"}, {"from": "endpoint_98", "to": "cache_1"}, {"from": "endpoint_98", "to": "cache_2"}, {"from": "endpoint_98", "to": "cache_3"}, {"from": "endpoint_98", "to": "cache_4"}, {"from": "endpoint_98", "to": "cache_5"}, {"from": "endpoint_98", "to": "cache_6"}, {"from": "endpoint_98", "to": "cache_7"}, {"from": "endpoint_98", "to": "cache_8"}, {"from": "endpoint_99", "to": "cache_0"}, {"from": "endpoint_99", "to": "cache_1"}, {"from": "endpoint_99", "to": "cache_2"}, {"from": "endpoint_99", "to": "cache_3"}, {"from": "endpoint_99", "to": "cache_4"}, {"from": "endpoint_99", "to": "cache_5"}, {"from": "endpoint_99", "to": "cache_6"}, {"from": "endpoint_99", "to": "cache_7"}, {"from": "endpoint_99", "to": "cache_8"}]);
+
+        // adding nodes and edges to the graph
+        data = {nodes: nodes, edges: edges};
+
+        var options = {
+    "configure": {
+        "enabled": false
+    },
+    "edges": {
+        "color": {
+            "inherit": true
+        },
+        "smooth": {
+            "enabled": false,
+            "type": "continuous"
+        }
+    },
+    "interaction": {
+        "dragNodes": true,
+        "hideEdgesOnDrag": false,
+        "hideNodesOnDrag": false
+    },
+    "physics": {
+        "barnesHut": {
+            "avoidOverlap": 0,
+            "centralGravity": 0.3,
+            "damping": 0.09,
+            "gravitationalConstant": -80000,
+            "springConstant": 0.001,
+            "springLength": 250
+        },
+        "enabled": true,
+        "stabilization": {
+            "enabled": true,
+            "fit": true,
+            "iterations": 1000,
+            "onlyDynamicEdges": false,
+            "updateInterval": 50
+        }
+    }
+};
+        
+        
+
+        
+
+        network = new vis.Network(container, data, options);
+
+        
+
+
+        
+        network.on("stabilizationProgress", function(params) {
+      		document.getElementById('loadingBar').removeAttribute("style");
+	        var maxWidth = 496;
+	        var minWidth = 20;
+	        var widthFactor = params.iterations/params.total;
+	        var width = Math.max(minWidth,maxWidth * widthFactor);
+
+	        document.getElementById('bar').style.width = width + 'px';
+	        document.getElementById('text').innerHTML = Math.round(widthFactor*100) + '%';
+	    });
+	    network.once("stabilizationIterationsDone", function() {
+	        document.getElementById('text').innerHTML = '100%';
+	        document.getElementById('bar').style.width = '496px';
+	        document.getElementById('loadingBar').style.opacity = 0;
+	        // really clean the dom element
+	        setTimeout(function () {document.getElementById('loadingBar').style.display = 'none';}, 500);
+	    });
+        
+
+        return network;
+
+    }
+
+    drawGraph();
+
+</script>
+</body>
+</html>
