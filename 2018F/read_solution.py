@@ -37,6 +37,9 @@ class Solution:
             for y in range(len(building_plan)):
                 for x in range(len(building_plan[0])):
                     if building_plan[y][x]:
+                        if self.grid[r + y][w + x] != '.':
+                            sys.exit("OVERLAP")
+                        self.grid[r + y][w + x] = index
                         building_coordinates += [[r + y, w + x]]
             self.building_coordinates += [building_coordinates]
 
