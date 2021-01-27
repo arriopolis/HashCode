@@ -25,7 +25,9 @@ try:
         for di,r in enumerate(block):
             for dj,c in enumerate(r):
                 grid[i+di][j+dj] = True
+        # print(buildings)
         sol.constructed_buildings = buildings
+        # print(len(sol.buildings))
         score = sol.determine_score()
         print("Number of buildings placed:", len(buildings), "Score:", score, end = '\r')
 except KeyboardInterrupt:

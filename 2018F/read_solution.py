@@ -5,7 +5,10 @@ import sys
 class Solution:
     def __init__(self, input_file):
         self.r, self.w, self.D, self.B, self.residentials, self.utilities = read_input(input_file)
-        self.buildings = self.residentials + self.utilities
+        self.buildings = [None]*self.B
+        for idx,hp,wp,cp,block in self.residentials + self.utilities:
+            self.buildings[idx] = (idx,hp,wp,cp,block)
+        # self.buildings = self.residentials + self.utilities
         self.building_coordinates = []
         self.constructed_buildings = []
         self.N = []
