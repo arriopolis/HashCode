@@ -8,12 +8,12 @@ class Solution:
         self.buildings = self.residentials + self.utilities
         self.building_coordinates = []
         self.constructed_buildings = []
-        self.N, self.grid = [], []
+        self.N = []
+        self.grid = [['.' for x in range(self.w)] for y in range(self.r)]
 
     def read_solution(self, output_file):
         f = open(output_file, "r")
         self.N = int(f.readline().strip())
-        self.grid = [['.' for x in range(self.w)] for y in range(self.r)]
         count = 0
         for line in f.read().split("\n"):
             id, row, column = map(int, line.split(" "))
