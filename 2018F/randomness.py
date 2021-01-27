@@ -1,14 +1,16 @@
 import random,sys
 from read_input import read_input
-from read_solution import Solution
+# from read_solution import Solution
+from calc_score import calc_score
 
 filename = sys.argv[1]
 h,w,d,b,residentials,services = read_input(filename)
-sol = Solution(sys.argv[1])
+# sol = Solution(sys.argv[1])
 
 grid = [[False]*w for _ in range(h)]
 buildings = []
 print("Keyboard interrupt once you're satisfied.")
+score = 0
 try:
     while True:
         idx,_,_,_,block = random.choice(residentials) if random.random() < .5 else random.choice(services)
@@ -25,11 +27,11 @@ try:
         for di,r in enumerate(block):
             for dj,c in enumerate(r):
                 grid[i+di][j+dj] = True
-        # print(buildings)
-        sol.constructed_buildings = buildings
-        # print(len(sol.buildings))
-        score = sol.determine_score()
-        print("Number of buildings placed:", len(buildings), "Score:", score, end = '\r')
+        if len(buildings)%10000 == 0:
+            # sol.constructed_buildings = buildings
+            # score = sol.determine_score()
+            calc_score(h, w, d, b, residentials, services, buildings)
+        print("Number of buildings placed:", len(buildings), "Last calculated score:", score, end = '\r')
 except KeyboardInterrupt:
     print()
     print('\n'.join(''.join('#' if c else '.' for c in r) for r in grid))
