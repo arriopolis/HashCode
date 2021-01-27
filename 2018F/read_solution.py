@@ -39,7 +39,7 @@ class Solution:
                     if building_plan[y][x]:
                         if self.grid[r + y][w + x] == '.':
                             self.grid[r + y][w + x] = building[0]
-                        else
+                        else:
                             print("OVERLAP")
                         building_coordinates += [[r + y, w + x]]
             self.building_coordinates += [building_coordinates]
