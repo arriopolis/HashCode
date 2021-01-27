@@ -79,7 +79,7 @@ class Solution:
 
     def print(self):
         for line in self.grid:
-            print([str(value) for value in line])
+            print(''.join([str(value) for value in line]))
 
     @staticmethod
     def print_grid(grid):

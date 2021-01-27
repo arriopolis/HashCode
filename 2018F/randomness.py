@@ -1,8 +1,10 @@
 import random,sys
 from read_input import read_input
+from read_solution import Solution
 
 filename = sys.argv[1]
 h,w,d,b,residentials,services = read_input(filename)
+sol = Solution(sys.argv[1])
 
 grid = [[False]*w for _ in range(h)]
 buildings = []
@@ -23,12 +25,16 @@ try:
         for di,r in enumerate(block):
             for dj,c in enumerate(r):
                 grid[i+di][j+dj] = True
-        print("Number of buildings placed:", len(buildings), end = '\r')
+        sol.constructed_buildings = buildings
+        score = sol.determine_score()
+        print("Number of buildings placed:", len(buildings), "Score:", score, end = '\r')
 except KeyboardInterrupt:
     print()
     print('\n'.join(''.join('#' if c else '.' for c in r) for r in grid))
 
-    with open('res_{}'.format(filename.split('/')[-1]).replace('.in','.txt'), 'w') as f:
+    sol.print()
+
+    with open('res/{}_{}.txt'.format(filename.split('/')[-1][0], score), 'w') as f:
         f.write(str(len(buildings)) + '\n')
         for idx,i,j in buildings:
             f.write('{} {} {}\n'.format(idx, i, j))
