@@ -30,13 +30,13 @@ try:
         if len(buildings)%10000 == 0:
             # sol.constructed_buildings = buildings
             # score = sol.determine_score()
-            calc_score(h, w, d, b, residentials, services, buildings)
+            score = calc_score(h, w, d, b, residentials, services, buildings)
         print("Number of buildings placed:", len(buildings), "Last calculated score:", score, end = '\r')
 except KeyboardInterrupt:
     print()
     print('\n'.join(''.join('#' if c else '.' for c in r) for r in grid))
 
-    sol.print()
+    # sol.print()
 
     with open('res/{}_{}.txt'.format(filename.split('/')[-1][0], score), 'w') as f:
         f.write(str(len(buildings)) + '\n')

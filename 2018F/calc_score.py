@@ -39,6 +39,7 @@ def calc_score(h, w, d, b, residentials, services, buildings):
         score += len(ss) * plans[idx][3]
     print()
     print("Score:", score)
+    return score
 
 if __name__ == "__main__":
     input_filename = sys.argv[1]
