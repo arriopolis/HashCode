@@ -168,20 +168,3 @@ with open('res/{}_{}.txt'.format(filename.split('/')[-1][0], score), 'w') as f:
     f.write(str(len(buildings)) + '\n')
     for idx,i,j in buildings:
         f.write('{} {} {}\n'.format(idx, i, j))
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

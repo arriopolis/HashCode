@@ -11,7 +11,7 @@ h,w = [int(sys.argv[2])]*2
 print(h,w)
 
 print("Keyboard interrupt once you're satisfied.")
-best_score = (0,None,None)
+best_score = (-1,None,None)
 try:
     while True:
         score = 0
@@ -38,14 +38,14 @@ try:
             non_changed_iterations = 0
             print("Number of buildings placed:", len(buildings), "Last calculated score:", score, '                     ', end = '\r')
         if score > best_score[0]:
-            print("Reported benefit's best score so far:", best_score[0], '                         ')
+            print("Reported benefit's best score so far:", score, '                         ')
         best_score = max(best_score, (score, buildings, grid))
 except KeyboardInterrupt:
-    print()
-    print('\n'.join(''.join('#' if c else '.' for c in r) for r in grid))
-
     buildings = best_score[1]
     grid = best_score[2]
+
+    print()
+    print('\n'.join(''.join('#' if c else '.' for c in r) for r in grid))
     new_buildings = []
     for idx,i,j in buildings:
         for k in range(origh//h):
