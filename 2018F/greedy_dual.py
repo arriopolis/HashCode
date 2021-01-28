@@ -2,9 +2,13 @@ from read_input import read_input
 import sys
 import numpy as np
 from scipy.signal import convolve2d
-print(sys.argv[1])
-h,w,d,b,residentials,services = read_input(sys.argv[1])
-print(h,w)
+filename = sys.argv[1]
+origh,origw,d,b,residentials,services = read_input(sys.argv[1])
+
+residentialsorig = residentials
+servicesorig = services
+
+h = w = 20
 
 def buffer(plan):
     plan = np.vstack([np.zeros(shape=[d, plan.shape[1]]), plan, np.zeros(shape=[d, plan.shape[1]])])
@@ -72,7 +76,7 @@ def calc_high_score_residential(residential):
 
 def add_service(service,i,j):
     print("Adding service")
-    global occupancy_map
+    global occupancy_map, buildings
     count, hp, wp, cp, plan, reach_map = service
     print(occupancy_map[i:i + plan.shape[0], j:j + plan.shape[1]])
     print(plan)
@@ -82,9 +86,11 @@ def add_service(service,i,j):
 
     service_maps[cp][i:i + reach_map.shape[0], j:j + reach_map.shape[1]]  += reach_map
 
+    buildings += [(service[0],i,j)]
+
 
 def add_residential(residential,i,j):
-    global occupancy_map, residential_map
+    global occupancy_map, residential_map, buildings
     count, hp, wp, cp, plan, reach_map = residential
     print(occupancy_map[i:i + plan.shape[0], j:j + plan.shape[1]])
     print(plan)
@@ -95,6 +101,7 @@ def add_residential(residential,i,j):
 
     residential_map[i + d:i + d + plan.shape[0], j + d:j + d + plan.shape[1]] += plan*(len(added_residentials) + 1)
     added_residentials.append(residential)
+    buildings += [(residential[0], i, j)]
 
 add_residential(residentials[0],0,0)
 print(residential_map[d:,d:])
@@ -136,8 +143,31 @@ while True:
 
     score += maxv
     print("added")
-print(score)
+from calc_score import calc_score
+score = calc_score(h, w, d, b, residentialsorig, servicesorig, buildings) * (origh // h) * (origw // w)
+print("score", score)
 print()
+
+
+print()
+
+residentials = residentialsorig
+services = servicesorig
+
+new_buildings = []
+for idx,i,j in buildings:
+    for k in range(origh//h):
+        for l in range(origw//w):
+            new_buildings.append((idx,k*h+i,l*w+j))
+buildings = new_buildings
+# sol.print()
+
+score = calc_score(origh, origw, d, b, residentials, services, buildings)
+print("Score:", score)
+with open('res/{}_{}.txt'.format(filename.split('/')[-1][0], score), 'w') as f:
+    f.write(str(len(buildings)) + '\n')
+    for idx,i,j in buildings:
+        f.write('{} {} {}\n'.format(idx, i, j))
 
 
 
