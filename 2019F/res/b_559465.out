@@ -1,4 +1,4 @@
-2256
+2244
 st 0
 cx 0
 sj 0
@@ -2096,11 +2096,7 @@ szyt 87
 ssyt 87
 syyt 87
 sdyt 87
-s3yt 0
 su1t 96
-cv1t 96
-s01t 96
-s51t 96
 sexx 60
 c7xx 60
 srxx 60
@@ -2110,10 +2106,6 @@ suxx 60
 svxx 60
 s0xx 60
 scox 98
-cmox 98
-saox 98
-sfox 98
-siox 98
 so2x 28
 cl2x 28
 s62x 28
@@ -2123,7 +2115,7 @@ sc2x 28
 sm2x 28
 sa2x 28
 sf2x 28
-si2x 1
+si2x 0
 swmx 3
 ctmx 3
 sxmx 3
@@ -2213,9 +2205,6 @@ svlj 36
 s0lj 36
 s5lj 36
 sahj 75
-cfhj 75
-sihj 75
-sehj 75
 s6aj 33
 sxej 27
 cjej 27
@@ -2254,4 +2243,3 @@ scyj 2
 smyj 2
 sayj 2
 sfyj 2
-siyj 2
