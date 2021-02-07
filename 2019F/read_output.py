@@ -7,6 +7,7 @@ class Solution:
         self.ready_time_of_file_at_server = []
         self.E = []
         self.compilation_steps = []
+        self.steps_that_could_be_removed = []
 
     def readfile(self, filepath):
         f = open(filepath, 'r')
@@ -16,7 +17,7 @@ class Solution:
             self.compilation_steps.append((name, int(s)))
 
     def determine_score(self, instance):
-        print("Ready times at each server is: ")
+        #print("Ready times at each server is: ")
         self.ready_time_of_file_at_server = [dict() for server in range(instance.S)]
         server_time = [0 for server in range(instance.S)]
         for step in self.compilation_steps:
@@ -25,6 +26,8 @@ class Solution:
             ready_time_of_latest_dependency = 0
             if instance.dependencies_dict[name]:
                 ready_time_of_latest_dependency = max([self.ready_time_of_file_at_server[server][dependency] for dependency in instance.dependencies_dict[name]])
+            if name in self.ready_time_of_file_at_server[server].keys() and self.ready_time_of_file_at_server[server][name] < max(ready_time_of_latest_dependency, server_time[server]) + c:
+                self.files_that_could_be_removed_at_server.append((name, server))
             server_time[server] = max(ready_time_of_latest_dependency, server_time[server]) + c
             self.ready_time_of_file_at_server[server][name] = server_time[server]
             for other_server in range(instance.S):
@@ -44,6 +47,9 @@ class Solution:
                     score += deadline - time + goal_points
         return score
 
+    def remove_useless_files(self, instance):
+        self.compilation_steps = [compilation_step for compilation_step in self.compilation_steps if compilation_step not in self.steps_that_could_be_removed]
+
 
 def main():
     solution = Solution()
@@ -53,6 +59,11 @@ def main():
     #     print(solution.compilation_steps[e])
     instance = Instance(sys.argv[1])
     print("Score equals: ", solution.determine_score(instance))
+    print(solution.files_that_could_be_removed)
+    solution.remove_useless_files(instance)
+    print("Score equals: ", solution.determine_score(instance))
+
+
 
 
 if __name__ == '__main__':
