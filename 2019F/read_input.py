@@ -16,8 +16,8 @@ class Instance:
             self.compiled_files.append((name, int(c), int(r)))
             self.compiled_files_dict[name] = (int(c), int(r))
             line = f.readline().split()
-            self.dependencies.append(tuple(line[1:]))
-            self.dependencies_dict[name] = tuple(line[1:])
+            self.dependencies.append(tuple(list(set(line[1:]))))
+            self.dependencies_dict[name] = tuple(list(set(line[1:])))
         for _ in range(self.T):
             name, d, g = f.readline().split()
             self.target_files.append((name, int(d), int(g)))
