@@ -32,8 +32,8 @@ class Solution:
                     time_after_replication = server_time[server] + r
                     if name not in self.ready_time_of_file_at_server[other_server].keys() or time_after_replication < self.ready_time_of_file_at_server[other_server][name]:
                         self.ready_time_of_file_at_server[other_server][name] = time_after_replication
-        for server in range(instance.S):
-            print(self.ready_time_of_file_at_server[server])
+        #for server in range(instance.S):
+            #print(self.ready_time_of_file_at_server[server])
         score = 0
         for name, target in instance.target_files_dict.items():
             deadline, goal_points = target[0], target[1]
