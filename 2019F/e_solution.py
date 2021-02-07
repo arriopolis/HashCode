@@ -116,7 +116,7 @@ import sys
 jobs = [ (fn,i)
     for i, s in enumerate(schedule) for fn in s
 ]
-with open('res/{}_{}.txt'.format('e_intriguing', score), 'w') as f:
+with open('res/{}_{}.txt'.format('e', score), 'w') as f:
     f.write(str(len(jobs)) + '\n')
     for name,s in jobs:
         f.write('{} {}\n'.format(name, s))
