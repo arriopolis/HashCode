@@ -15,6 +15,7 @@ for i,deps in enumerate(inst.dependencies):
         dep_graph[name].add(d)
         child_graph[d].add(name)
 
+# Prune non-useful parts of the tree
 useful_dep_graph = {}
 useful_child_graph = {}
 to_visit = set(target_files)
@@ -29,6 +30,38 @@ while to_visit:
 
 dep_graph,child_graph = useful_dep_graph,useful_child_graph
 
+# Set up lower bound data structure
+print("Setting up lower bounds...")
+lower_bounds = {}
+frontier = set(x for x,deps in dep_graph.items() if not deps)
+while frontier:
+    print(len(frontier), '    ', end = '\r')
+    name = frontier.pop()
+    lower_bounds[name] = (max(lower_bounds[x] for x in dep_graph[name]) if dep_graph[name] else 0) + compile_times[name]
+    if name in child_graph:
+        for x in child_graph[name]:
+            if dep_graph[x] <= set(lower_bounds.keys()):
+                frontier.add(x)
+print()
+
+# Update the data structure
+print("Updating data structure...")
+target_files = {name : (d,g) for name,(d,g) in target_files.items() if lower_bounds[name] <= d}
+useful_dep_graph = {}
+useful_child_graph = {}
+to_visit = set(target_files)
+while to_visit:
+    name = to_visit.pop()
+    useful_dep_graph[name] = dep_graph[name]
+    for x in dep_graph[name]:
+        if x not in useful_child_graph: useful_child_graph[x] = set()
+        useful_child_graph[x].add(name)
+        if x not in useful_dep_graph:
+            to_visit.add(x)
+
+dep_graph,child_graph = useful_dep_graph,useful_child_graph
+print("Number of files left:", len(dep_graph))
+
 server_available_times = [0]*inst.S
 server_files_available = [{} for _ in range(inst.S)]
 compiled = set()
@@ -36,9 +69,11 @@ frontier = set(x for x,deps in dep_graph.items() if not deps)
 jobs = []
 score = 0
 num_overdue = 0
+
 while frontier:
     print("Number of compiled files: {} / {}      ".format(len(compiled), len(dep_graph)), end = '\r')
     name = frontier.pop()
+    if name not in dep_graph: continue
     best_finish_time = (float('inf'), None)
     for s in range(inst.S):
         files_available = max(server_files_available[s][x] for x in dep_graph[name]) if dep_graph[name] else 0
@@ -64,6 +99,42 @@ while frontier:
         for x in child_graph[name]:
             if dep_graph[x] <= compiled:
                 frontier.add(x)
+
+    to_visit = set()
+    target_files_todel = set()
+    if finish_time > lower_bounds[name]:
+        lower_bounds[name] = finish_time
+        if name in child_graph:
+            for x in child_graph[name]:
+                to_visit.add(x)
+    while to_visit:
+        x = to_visit.pop()
+        new_lower_bound = (max(lower_bounds[y] for y in dep_graph[x]) if dep_graph[x] else 0) + compile_times[x]
+        if new_lower_bound > lower_bounds[x]:
+            lower_bounds[x] = new_lower_bound
+            if x in child_graph:
+                for y in child_graph[x]:
+                    to_visit.add(y)
+            if x in target_files and lower_bounds[x] >= target_files[x][0]:
+                target_files_todel.add(x)
+    if target_files_todel:
+        for x in target_files_todel:
+            del target_files[x]
+        useful_dep_graph = {}
+        useful_child_graph = {}
+        to_visit = set(target_files)
+        while to_visit:
+            name = to_visit.pop()
+            useful_dep_graph[name] = dep_graph[name]
+            for x in dep_graph[name]:
+                if x not in useful_child_graph: useful_child_graph[x] = set()
+                useful_child_graph[x].add(name)
+                if x not in useful_dep_graph:
+                    to_visit.add(x)
+        dep_graph,child_graph = useful_dep_graph,useful_child_graph
+        print()
+        print("Number of files left:", len(useful_dep_graph))
+
 print()
 print("Score:", score)
 print("Number of items that were overdue:", num_overdue)
@@ -71,7 +142,7 @@ print("Number of items that were overdue:", num_overdue)
 # score = calc_score(jobs)
 # print("Score:", score)
 
-with open('res/{}_{}.txt'.format(sys.argv[1].split('/')[1][0], score), 'w') as f:
+with open('res/{}_{}.out'.format(sys.argv[1].split('/')[1][0], score), 'w') as f:
     f.write(str(len(jobs)) + '\n')
     for name,s in jobs:
         f.write('{} {}\n'.format(name, s))
