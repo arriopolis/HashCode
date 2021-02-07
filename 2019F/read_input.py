@@ -1,5 +1,6 @@
 import sys
 
+
 class Instance:
     def __init__(self, filepath):
         f = open(filepath, 'r')
@@ -11,7 +12,7 @@ class Instance:
             name, c, r = f.readline().split()
             self.compiled_files.append((name, int(c), int(r)))
             line = f.readline().split()
-            self.dependencies.append(line[1:])
+            self.dependencies.append(tuple(line[1:]))
         for _ in range(self.T):
             name, d, g = f.readline().split()
             self.target_files.append((name, d, g))
