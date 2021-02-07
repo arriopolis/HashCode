@@ -14,7 +14,7 @@ class Instance:
             self.dependencies[_] = line[1:]
         for _ in range(self.T):
             name, d, g = f.readline().split()
-            self.target_files.append((name, d, g))
+            self.target_files.append((name, int(d), int(g)))
 
 
 def main():
