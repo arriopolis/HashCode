@@ -44,7 +44,6 @@ def calc_high_score_service(service):
     maxi= -1
     maxj= -1
     maxv = -1
-    print( "poss:", list(positions)[:10])
     for i,j in zip(*np.where(has_positions(plan))):
         buildings = set((residential_map[i:i+reach_map.shape[0], j:j+reach_map.shape[1]]*(reach_map-service_maps[cp][i:i+reach_map.shape[0], j:j+reach_map.shape[1]]*reach_map)).flatten())
         if 0 in buildings:
@@ -54,11 +53,13 @@ def calc_high_score_service(service):
         try:
             v = sum([added_residentials[b-1][3] for b in buildings])
         except Exception as e:
+            import pdb;
+            pdb.set_trace()
             print(buildings)
             raise e
         if maxv < v:
             maxi,maxj,maxv = i,j,v
-    return maxi,maxj,maxv
+    return maxi,maxj,maxv/np.sum(plan)
 
 
 def calc_high_score_residential(residential):
@@ -67,24 +68,24 @@ def calc_high_score_residential(residential):
     for r, service_map in service_maps.items():
 
         point_map += (convolve2d(service_map[d:-d,d:-d], plan[::-1,::-1], 'full')[plan.shape[0]-1:, plan.shape[1]-1:]>0).astype(int)
+    point_map *= cp
     point_map *= has_positions(plan).astype(int)
     #point_map += has_positions(plan).astype(int)-1
     maxv = point_map.max()
     i,j = np.where(point_map == maxv)
-    return i[0],j[0],maxv
+    return i[0],j[0],maxv/np.sum(plan)
 
 
 def add_service(service,i,j):
     print("Adding service")
     global occupancy_map, buildings
     count, hp, wp, cp, plan, reach_map = service
-    print(occupancy_map[i:i + plan.shape[0], j:j + plan.shape[1]])
-    print(plan)
     assert np.sum(plan * occupancy_map[i:i + plan.shape[0], j:j + plan.shape[1]]) == np.sum(plan)
 
     occupancy_map[i:i + plan.shape[0], j:j + plan.shape[1]] -= plan
 
     service_maps[cp][i:i + reach_map.shape[0], j:j + reach_map.shape[1]]  += reach_map
+    service_maps[cp][i:i + reach_map.shape[0], j:j + reach_map.shape[1]] = service_maps[cp][i:i + reach_map.shape[0], j:j + reach_map.shape[1]].astype(bool).astype(int)
 
     buildings += [(service[0],i,j)]
 
@@ -92,10 +93,6 @@ def add_service(service,i,j):
 def add_residential(residential,i,j):
     global occupancy_map, residential_map, buildings
     count, hp, wp, cp, plan, reach_map = residential
-    print(occupancy_map[i:i + plan.shape[0], j:j + plan.shape[1]])
-    print(plan)
-    print(has_positions(plan).astype(int))
-    print(occupancy_map)
     assert np.sum(plan * occupancy_map[i:i + plan.shape[0], j:j + plan.shape[1]]) == np.sum(plan)
     occupancy_map[i:i + plan.shape[0], j:j + plan.shape[1]] -= plan
 
@@ -103,17 +100,21 @@ def add_residential(residential,i,j):
     added_residentials.append(residential)
     buildings += [(residential[0], i, j)]
 
-add_residential(residentials[0],0,0)
+best_residential = (-1,None)
+for residential in residentials:
+    count, hp, wp, cp, plan, reach_map = residential
+    best_residential = max(best_residential,(cp/np.sum(plan), residential))
+add_residential(best_residential[1],0,0)
 print(residential_map[d:,d:])
 
 
 score = 0
+max_value_obj = (-1, None,None,None,None)
 while True:
     maxv = -1
     maxobj = None
     maxi = maxj = -1
     maxtype = None
-    print("running residentials")
     for residential in residentials:
         i,j,v = calc_high_score_residential(residential)
         if v > maxv:
@@ -122,8 +123,6 @@ while True:
             maxi = i
             maxj = j
             maxv = v
-    print(maxv)
-    print("running services")
     for service in services:
         i,j,v = calc_high_score_service(service)
         if v > maxv:
@@ -132,10 +131,11 @@ while True:
             maxi = i
             maxj = j
             maxv = v
-    print(maxv)
     if maxv <=0:
         print("nothing found")
         break
+    print(maxv * np.sum(maxobj[4]))
+    max_value_obj = max(max_value_obj,(maxv,maxi,maxj,maxobj, maxtype))
     if maxtype == "residential":
         add_residential(maxobj, maxi,maxj)
     else:
@@ -143,6 +143,60 @@ while True:
 
     score += maxv
     print("added")
+
+
+service_maps = {t: np.zeros(shape =[h+2*d,w+2*d], dtype = int)for t in service_types}
+residential_map = np.zeros(shape = [h+2*d,w+2*d], dtype = int)
+occupancy_map = np.ones(shape = [h,w], dtype = int)
+
+added_residentials = []
+
+buildings = []
+maxv,maxi,maxj,maxobj,maxtype = max_value_obj
+
+if maxtype == "residential":
+    add_residential(maxobj, maxi, maxj)
+else:
+    add_service(maxobj, maxi, maxj)
+
+print(residential_map[d:,d:])
+
+score = 0
+max_value_obj = (-1, None,None,None,None)
+while True:
+    maxv = -1
+    maxobj = None
+    maxi = maxj = -1
+    maxtype = None
+    for residential in residentials:
+        i,j,v = calc_high_score_residential(residential)
+        if v > maxv:
+            maxobj = residential
+            maxtype = "residential"
+            maxi = i
+            maxj = j
+            maxv = v
+    for service in services:
+        i,j,v = calc_high_score_service(service)
+        if v > maxv:
+            maxobj = service
+            maxtype = "service"
+            maxi = i
+            maxj = j
+            maxv = v
+    if maxv <=0:
+        print("nothing found")
+        break
+    max_value_obj = max(max_value_obj,(maxv,maxi,maxj,maxobj, maxtype))
+    print(maxv*np.sum(maxobj[4]))
+    if maxtype == "residential":
+        add_residential(maxobj, maxi,maxj)
+    else:
+        add_service(maxobj,maxi,maxj)
+
+    score += maxv
+    print("added")
+
 from calc_score import calc_score
 score = calc_score(h, w, d, b, residentialsorig, servicesorig, buildings) * (origh // h) * (origw // w)
 print("score", score)
@@ -162,9 +216,26 @@ for idx,i,j in buildings:
 buildings = new_buildings
 # sol.print()
 
-score = calc_score(origh, origw, d, b, residentials, services, buildings)
+#score = calc_score(origh, origw, d, b, residentials, services, buildings)
 print("Score:", score)
 with open('res/{}_{}.txt'.format(filename.split('/')[-1][0], score), 'w') as f:
     f.write(str(len(buildings)) + '\n')
     for idx,i,j in buildings:
         f.write('{} {} {}\n'.format(idx, i, j))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -52,4 +52,4 @@ if __name__ == "__main__":
         buildings = [tuple(map(int,line.strip().split())) for line in f.readlines()[1:]]
     # print(buildings)
 
-    calc_score(h, w, d, b, residentials, services, buildings)
+    print(calc_score(h, w, d, b, residentials, services, buildings))
