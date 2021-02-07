@@ -7,7 +7,7 @@ class Solution:
         self.ready_time_of_file_at_server = []
         self.E = []
         self.compilation_steps = []
-        self.files_that_could_be_removed = []
+        self.steps_that_could_be_removed = []
 
     def readfile(self, filepath):
         f = open(filepath, 'r')
@@ -27,7 +27,7 @@ class Solution:
             if instance.dependencies_dict[name]:
                 ready_time_of_latest_dependency = max([self.ready_time_of_file_at_server[server][dependency] for dependency in instance.dependencies_dict[name]])
             if name in self.ready_time_of_file_at_server[server].keys() and self.ready_time_of_file_at_server[server][name] < max(ready_time_of_latest_dependency, server_time[server]) + c:
-                self.files_that_could_be_removed.append(name)
+                self.files_that_could_be_removed_at_server.append((name, server))
             server_time[server] = max(ready_time_of_latest_dependency, server_time[server]) + c
             self.ready_time_of_file_at_server[server][name] = server_time[server]
             for other_server in range(instance.S):
@@ -48,7 +48,7 @@ class Solution:
         return score
 
     def remove_useless_files(self, instance):
-        self.compilation_steps = [compilation_step for compilation_step in self.compilation_steps if compilation_step[0] not in self.files_that_could_be_removed]
+        self.compilation_steps = [compilation_step for compilation_step in self.compilation_steps if compilation_step not in self.steps_that_could_be_removed]
 
 
 def main():
