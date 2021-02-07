@@ -3,12 +3,14 @@ from read_input import Instance
 
 
 class Solution:
-    def __init__(self, filepath):
+    def __init__(self):
         self.ready_time_of_file_at_server = []
+        self.E = []
+        self.compilation_steps = []
 
+    def readfile(self, filepath):
         f = open(filepath, 'r')
         self.E = int(f.readline())
-        self.compilation_steps = []
         for _ in range(self.E):
             name, s = f.readline().split()
             self.compilation_steps.append((name, int(s)))
@@ -43,10 +45,11 @@ class Solution:
 
 
 def main():
-    solution = Solution(sys.argv[2])
-    print(solution.E)
-    for e in range(solution.E):
-        print(solution.compilation_steps[e])
+    solution = Solution()
+    solution.readfile(sys.argv[2])
+    # print(solution.E)
+    # for e in range(solution.E):
+    #     print(solution.compilation_steps[e])
     instance = Instance(sys.argv[1])
     print(solution.determine_score(instance))
 
