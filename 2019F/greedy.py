@@ -36,6 +36,7 @@ frontier = set(x for x,deps in dep_graph.items() if not deps)
 jobs = []
 score = 0
 while frontier:
+    print("Number of compiled files: {} / {}      ".format(len(compiled), len(dep_graph)), end = '\r')
     name = frontier.pop()
     best_finish_time = (float('inf'), None)
     for s in range(inst.S):
@@ -58,6 +59,7 @@ while frontier:
         for x in child_graph[name]:
             if dep_graph[x] <= compiled:
                 frontier.add(x)
+print()
 print("Score:", score)
 
 # score = calc_score(jobs)
