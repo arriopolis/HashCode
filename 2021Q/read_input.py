@@ -32,21 +32,27 @@ class Solution:
         #   (intersection_id, list((street, time),....),
         #   (inte...)
         #   )
-
+        allowed_streets = set(instance.streets.keys())
         assert type(solution) == list
+        found_intersections = set()
         for intersection in solution:
             assert type(intersection) == tuple
             assert len(intersection) == 2
             iid, streets = intersection
             assert type(iid) == int
+            assert intersection not in found_intersections
+            found_intersections.add(intersection)
+            assert 0<= iid < instance.I
             assert type(streets) == list
             found_streets = set()
             for street in streets:
                 assert len(street) == 2
                 sn, time = street
+                assert sn in allowed_streets
                 assert type(sn) == str
                 assert sn not in found_streets
-                assert type(time) ==  int
+                assert type(time) == int
+                assert 1<= time<= instance.D
                 found_streets.add(sn)
 
         self.solution = solution
@@ -70,6 +76,8 @@ class Solution:
     def score(self):
         # calculate score
         score = 0
+
+
         return score
 
     def write(self):
@@ -86,5 +94,5 @@ class Solution:
                 f.write(f"{iid}\n")
                 f.write(f"{len(streets)}")
                 for sn, time in streets:
-                    f.write()
+                    f.write(f"{sn} {time}\n")
             # write this to file
