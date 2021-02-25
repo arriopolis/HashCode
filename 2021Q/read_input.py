@@ -9,7 +9,7 @@ class Instance:
             # parse input
 
     @staticmethod
-    def from_argv():
+    def rom_argv():
         return Instance(sys.argv[1])
 
     def score_upperbound(self):
