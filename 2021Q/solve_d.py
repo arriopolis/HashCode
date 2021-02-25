@@ -30,7 +30,7 @@ path_lengths.sort(reverse = True)
 
 m = float(sys.argv[2]) if len(sys.argv) >= 3 else 1
 print("Multiplier:", m)
-epochs = [round(m * len(graph[e])) for e in range(inst.I)]
+epochs = [round(m * (len(graph[e]) if e in graph else 1)) for e in range(inst.I)]
 
 intersections = [[None]*epochs[e] for e in range(inst.I)]
 fitted_streets = [{} for _ in range(inst.I)]
