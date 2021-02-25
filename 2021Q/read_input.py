@@ -1,6 +1,5 @@
 import sys
 
-import collections
 
 class Instance:
     def __init__(self, file):
@@ -9,7 +8,7 @@ class Instance:
             # parse input
 
     @staticmethod
-    def rom_argv():
+    def from_argv():
         return Instance(sys.argv[1])
 
     def score_upperbound(self):
