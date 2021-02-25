@@ -1,6 +1,5 @@
 import sys
 
-
 class Instance:
     def __init__(self, file):
         self.file_name = file
