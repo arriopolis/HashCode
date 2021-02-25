@@ -22,7 +22,7 @@ class Instance:
         return self.V * (self.F + self.D)
 
 
-from collections import deque
+from collections import deque, defaultdict
 
 class Solution:
     def __init__(self, solution, instance):
@@ -83,7 +83,7 @@ class Solution:
             n_argv += 1
         return Solution.from_file(sys.argv[n_argv], instance)
 
-    def score(self):
+    def score(self, show_streets= False):
         # calculate score
         score = 0
         cars_tl = {s:deque() for s in self.instance.streets.keys()}
@@ -91,9 +91,13 @@ class Solution:
         schedules = {iid: streets for iid, streets in self.solution}
         current_tl = {iid: (0,streets[0][1]+1) for iid, streets in self.solution}
 
+        vehicles_left_on_street = defaultdict(int)
+        ineffective_tl = defaultdict(int)
 
         for i, path in enumerate(self.instance.paths):
             cars_tl[path[0]].append(i)
+
+
 
 
         for t in range(self.instance.D):
@@ -106,6 +110,8 @@ class Solution:
                 active_streets.append(schedules[iid][idx][0])
                 time_left -=1
                 if time_left == 0:
+                    if show_streets and len(cars_tl[schedules[iid][idx][0]]) >0 :
+                        vehicles_left_on_street[schedules[iid][idx][0]]=max(len(cars_tl[schedules[iid][idx][0]]),vehicles_left_on_street[schedules[iid][idx][0]])
                     idx = (idx+1) % len(schedules[iid])
                     time_left = schedules[iid][idx][1]
                 current_tl[iid] = (idx, time_left)
@@ -122,6 +128,8 @@ class Solution:
                     idx = self.instance.paths[car].index(sn)+1
                     next_street = self.instance.paths[car][idx]
                     new_cars_in_transit.append((car, next_street, self.instance.streets[next_street][2]-1))
+                else:
+                    ineffective_tl[sn] += 1
 
             for car, street, time_left in cars_in_transit:
                 time_left -= 1
@@ -135,7 +143,15 @@ class Solution:
                     else:
                         cars_tl[street].append(car)
             cars_in_transit = new_cars_in_transit
+        if show_streets:
+            print("vehicles_left on street:")
+            for key, n in sorted(vehicles_left_on_street.items(), key = lambda x:-x[1])[:10]:
+                if n > 2:
+                    print(key,n)
 
+            print("ineffective streets:")
+            for key, n in sorted(ineffective_tl.items(), key = lambda x:-x[1])[:10]:
+                print(key,n)
         return score
 
     def write(self):
@@ -156,4 +172,4 @@ class Solution:
 
 
 if __name__ == "__main__":
-    print(Solution.from_argv().score())
+    print(Solution.from_argv().score(True))
