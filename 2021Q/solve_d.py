@@ -28,7 +28,7 @@ for p in inst.paths:
     path_lengths.append((l,p))
 path_lengths.sort(reverse = True)
 
-m = int(sys.argv[2]) if len(sys.argv) >= 3 else 1
+m = float(sys.argv[2]) if len(sys.argv) >= 3 else 1
 print("Multiplier:", m)
 epochs = [round(m * len(graph[e])) for e in range(inst.I)]
 
