@@ -15,7 +15,7 @@ for i,intsctn in enumerate(intersection_counts):
     tot = sum(intsctn.values())
     durs = []
     for s,n in intsctn.items():
-        dur = round(n/tot * epoch_length)
+        dur = round(n/tot * epoch_length + .5)
         if dur > 0: durs.append((s,dur))
     if durs: sol.append((i,durs))
 
