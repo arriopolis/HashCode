@@ -19,7 +19,7 @@ class Instance:
         return Instance(sys.argv[1])
 
     def score_upperbound(self):
-        return float('inf')
+        return self.V * (self.F + self.D)
 
 
 class Solution:
