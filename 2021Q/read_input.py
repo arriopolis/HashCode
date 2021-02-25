@@ -28,6 +28,30 @@ class Solution:
         self.instance = instance
         # typecheck the solution
 
+        # solution = list(
+        #   (intersection_id, list((street, time),....),
+        #   (inte...)
+        #   )
+
+        assert type(solution) == list
+        for intersection in solution:
+            assert type(intersection) == tuple
+            assert len(intersection) == 2
+            iid, streets = intersection
+            assert type(iid) == int
+            assert type(streets) == list
+            found_streets = set()
+            for street in streets:
+                assert len(street) == 2
+                sn, time = street
+                assert type(sn) == str
+                assert sn not in found_streets
+                assert type(time) ==  int
+                found_streets.add(sn)
+
+        self.solution = solution
+
+
     @staticmethod
     def from_file(file, instance):
         with open(file) as f:
@@ -56,5 +80,10 @@ class Solution:
         file_path = os.path.join("output", file_name)
 
         with open(file_path, "w") as f:
-            pass
+            f.write(f"{len(self.solution)}\n")
+            for iid, streets in self.solution:
+                f.write(f"{iid}\n")
+                f.write(f"{len(streets)}")
+                for sn, time in streets:
+                    f.write()
             # write this to file
