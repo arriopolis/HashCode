@@ -91,7 +91,7 @@ class Solution:
             f.write(f"{len(self.solution)}\n")
             for iid, streets in self.solution:
                 f.write(f"{iid}\n")
-                f.write(f"{len(streets)}")
+                f.write(f"{len(streets)}\n")
                 for sn, time in streets:
                     f.write(f"{sn} {time}\n")
             # write this to file
