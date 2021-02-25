@@ -40,8 +40,8 @@ class Solution:
             assert len(intersection) == 2
             iid, streets = intersection
             assert type(iid) == int
-            assert intersection not in found_intersections
-            found_intersections.add(intersection)
+            assert iid not in found_intersections
+            found_intersections.add(iid)
             assert 0<= iid < instance.I
             assert type(streets) == list
             found_streets = set()
