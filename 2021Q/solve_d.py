@@ -3,18 +3,36 @@ import sys
 
 inst = Instance.from_argv()
 
+from collections import defaultdict
+streets = defaultdict(int)
+for path in inst.paths:
+    for street in path:
+        streets[street] += 1
+
+new_streets = {}
+for street in streets:
+    new_streets[street] = inst.streets[street]
+
+inst.streets = new_streets
+
+graph = {}
+for s,(b,e,l) in inst.streets.items():
+    if e not in graph: graph[e] = set()
+    graph[e].add(b)
+
 path_lengths = []
 for p in inst.paths:
     l = 0
     for s in p:
         l += inst.streets[s][2]
     path_lengths.append((l,p))
-path_lengths.sort()
+path_lengths.sort(reverse = True)
 
-epoch = int(sys.argv[2])
-print("Epoch:", epoch)
+m = int(sys.argv[2]) if len(sys.argv) >= 3 else 1
+print("Multiplier:", m)
+epochs = [round(m * len(graph[e])) for e in range(inst.I)]
 
-intersections = [[None]*epoch for _ in range(inst.I)]
+intersections = [[None]*epochs[e] for e in range(inst.I)]
 fitted_streets = [{} for _ in range(inst.I)]
 for i,(l,p) in enumerate(path_lengths):
     print(i, '/', len(path_lengths), '    ', end = '\r')
@@ -24,13 +42,13 @@ for i,(l,p) in enumerate(path_lengths):
         if ctr > 0: t += inst.streets[s][2]
         e = inst.streets[s][1]
         if s in fitted_streets[e]:
-            t += ((fitted_streets[e][s] - t)%epoch + epoch)%epoch
+            t += ((fitted_streets[e][s] - t)%epochs[e] + epochs[e])%epochs[e]
             if t >= inst.D: break
         else:
-            while intersections[e][t%epoch] != None and t < inst.D:
+            while intersections[e][t%epochs[e]] != None and t < inst.D:
                 t += 1
             if t == inst.D: break
-            to_add.add((e,t%epoch,s))
+            to_add.add((e,t%epochs[e],s))
     else:
         for e,t,s in to_add:
             intersections[e][t] = s
@@ -51,11 +69,11 @@ for i,isn in enumerate(intersections):
                 res.append((s,x-t))
                 t = x
                 s = a
-        res.append((s,epoch-t))
+        res.append((s,epochs[i]-t))
         if any(b == 0 for a,b in res):
             print(res)
             sys.exit()
-        if sum(b for a,b in res) != epoch:
+        if sum(b for a,b in res) != epochs[i]:
             print(res)
             sys.exit()
 
