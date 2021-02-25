@@ -85,8 +85,7 @@ class Solution:
         score = self.score()
         print(f"New score is {score} which is {score/self.instance.score_upperbound()*100}% of upperbound.")
         file_name = f"{self.instance.file_name.split('/')[-1][0]}_{score}.out"
-        file_path = os.path.join("output",
-                                 file_name)
+        file_path = os.path.join("output", file_name)
 
         with open(file_path, "w") as f:
             f.write(f"{len(self.solution)}\n")
