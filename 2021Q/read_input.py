@@ -3,8 +3,16 @@ import sys
 class Instance:
     def __init__(self, file):
         self.file_name = file
-        with open(file as f):
-            # parse input
+        with open(file) as f:
+            self.D, self.I, self.S, self.V, self.F = map(int,next(f).strip().split())
+            self.streets = {}
+            for _ in range(self.S):
+                B,E,name,L = next(f).strip().split()
+                self.streets[name] = (int(B),int(E),int(L))
+            self.paths = []
+            for _ in range(self.V):
+                p = list(next(f).strip().split())[1:]
+                self.paths.append(p)
 
     @staticmethod
     def from_argv():
