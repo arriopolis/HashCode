@@ -1,4 +1,5 @@
 from read_input import Instance, Solution
+import sys
 
 inst = Instance.from_argv()
 
@@ -8,21 +9,32 @@ for p in inst.paths:
     for s in p:
         l += inst.streets[s][2]
     path_lengths.append((l,p))
-
 path_lengths.sort()
 
-streets_visited = set()
-intersections = [[None]*inst.D for _ in range(inst.I)]
-for l,p in path_lengths:
-    if any(s in streets_visited for s in p): continue
-    streets_visited.update(p)
+epoch = int(sys.argv[2])
+print("Epoch:", epoch)
 
+intersections = [[None]*epoch for _ in range(inst.I)]
+fitted_streets = [{} for _ in range(inst.I)]
+for i,(l,p) in enumerate(path_lengths):
+    print(i, '/', len(path_lengths), '    ', end = '\r')
     t = 0
+    to_add = set()
     for ctr,s in enumerate(p):
         if ctr > 0: t += inst.streets[s][2]
         e = inst.streets[s][1]
-        while intersections[e][t] != None: t += 1
-        intersections[e][t] = s
+        if s in fitted_streets[e]:
+            t += ((fitted_streets[e][s] - t)%epoch + epoch)%epoch
+            if t >= inst.D: break
+        else:
+            while intersections[e][t%epoch] != None and t < inst.D:
+                t += 1
+            if t == inst.D: break
+            to_add.add((e,t%epoch,s))
+    else:
+        for e,t,s in to_add:
+            intersections[e][t] = s
+            fitted_streets[e][s] = t
 
 sol = []
 for i,isn in enumerate(intersections):
@@ -33,13 +45,19 @@ for i,isn in enumerate(intersections):
                 s = a
                 break
         res = []
-        t = -1
+        t = 0
         for x,a in enumerate(isn):
             if a != None and a != s:
                 res.append((s,x-t))
                 t = x
                 s = a
-        res.append((s,inst.D-t-1))
+        res.append((s,epoch-t))
+        if any(b == 0 for a,b in res):
+            print(res)
+            sys.exit()
+        if sum(b for a,b in res) != epoch:
+            print(res)
+            sys.exit()
 
         already_present = set()
         for a,b in res:
