@@ -21,16 +21,24 @@ for path in inst.paths:
 
 # Hyp: alle paden hebben unieke straten
 
+
 streets = defaultdict(int)
 for path in inst.paths:
     for street in path:
         streets[street] += 1
 
-for key, n in sorted(streets.items(), key=lambda x: -x[1])[:10]:
-    print(key, n)
 
+new_streets = {}
+for street in streets:
+    new_streets[street] = inst.streets[street]
+
+inst.streets[street] = new_streets
+
+print(len(streets))
 
 street_iid = defaultdict(list)
+
+
 
 for street in streets:
     street_iid[inst.streets[street][1]].append(street)
