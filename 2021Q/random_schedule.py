@@ -1,4 +1,5 @@
-from read_input import *
+# from read_input import *
+from sim_math import *
 import random
 
 def random_solution():
@@ -25,10 +26,11 @@ def random_solution():
 
 
 def main():
-    import multiprocessing
-    max_num_of_procs = 10
-    for proc in range(max_num_of_procs):
-        multiprocessing.Process(target=random_solution, args=()).start()
+    random_solution()
+    # import multiprocessing
+    # max_num_of_procs = 1
+    # for proc in range(max_num_of_procs):
+    #     multiprocessing.Process(target=random_solution, args=()).start()
 
 
 if __name__ == "__main__":
